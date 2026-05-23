@@ -16,41 +16,46 @@
     </div>
   </div>
 
-  <div class="card shadow-sm">
-    <div class="card-body">
+  <div class="row">
+    <div class="col-lg-7 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <p><strong>Numéro :</strong> <%= @invoice.invoice_number.presence || "N/A" %></p>
+          <p><strong>Montant :</strong> $<%= @invoice.amount || 0 %></p>
+          <p><strong>Status :</strong> <%= @invoice.status.presence || "pending" %></p>
+          <p><strong>Catégorie :</strong> <%= @invoice.category.presence || "N/A" %></p>
+          <p><strong>Échéance :</strong> <%= @invoice.due_date || "N/A" %></p>
 
-      <p>
-        <strong>Montant :</strong>
-        $<%= @invoice.amount %>
-      </p>
+          <% if @invoice.folders.any? %>
+            <p>
+              <strong>Dossiers :</strong>
+              <%= @invoice.folders.map(&:name).join(", ") %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+    </div>
 
-      <p>
-        <strong>Status :</strong>
-        <%= @invoice.status %>
-      </p>
+    <div class="col-lg-5 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="mb-3">Document</h5>
 
-      <p>
-        <strong>Catégorie :</strong>
-        <%= @invoice.category %>
-      </p>
+          <% if @invoice.document.attached? %>
+            <% if @invoice.document.content_type.start_with?("image/") %>
+              <%= image_tag @invoice.document, class: "img-fluid rounded border mb-3" %>
+            <% else %>
+              <p class="text-muted">Prévisualisation PDF à venir.</p>
+            <% end %>
 
-      <p>
-        <strong>Échéance :</strong>
-        <%= @invoice.due_date %>
-      </p>
-
-      <% if @invoice.document.attached? %>
-        <hr>
-
-        <p>
-          <strong>Document :</strong>
-        </p>
-
-        <%= link_to @invoice.document.filename,
-          rails_blob_path(@invoice.document, disposition: "attachment"),
-          class: "btn btn-outline-primary" %>
-      <% end %>
-
+            <%= link_to "Télécharger le document",
+              rails_blob_path(@invoice.document, disposition: "attachment"),
+              class: "btn btn-outline-primary" %>
+          <% else %>
+            <p class="text-muted mb-0">Aucun document attaché.</p>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 
