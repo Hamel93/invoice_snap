@@ -1,2 +1,37 @@
-<h1>Reminders#index</h1>
-<p>Find me in app/views/reminders/index.html.erb</p>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Rappels</h1>
+    <%= link_to "Nouveau rappel", new_reminder_path, class: "btn btn-primary" %>
+  </div>
+
+  <% if @reminders.any? %>
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Facture</th>
+              <th>Date du rappel</th>
+              <th>Envoyé</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @reminders.each do |reminder| %>
+              <tr>
+                <td><%= reminder.invoice.company_name %></td>
+                <td><%= reminder.reminder_date %></td>
+                <td><%= reminder.sent ? "Oui" : "Non" %></td>
+                <td>
+                  <%= link_to "Voir facture", invoice_path(reminder.invoice), class: "btn btn-sm btn-outline-dark" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="alert alert-info">Aucun rappel pour le moment.</div>
+  <% end %>
+</div>
