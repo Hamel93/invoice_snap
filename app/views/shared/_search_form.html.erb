@@ -1,0 +1,12 @@
+<%= form_with url: search_invoices_path,
+              method: :get,
+              local: true,
+              class: "d-flex" do %>
+
+  <%= text_field_tag :query,
+                     params[:query],
+                     placeholder: "Rechercher...",
+                     class: "form-control me-2" %>
+
+  <%= submit_tag "OK", class: "btn btn-outline-light" %>
+<% end %>
