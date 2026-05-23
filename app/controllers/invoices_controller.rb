@@ -19,6 +19,9 @@ class InvoicesController < ApplicationController
 
     if @invoice.save
       update_invoice_folders
+
+      InvoiceOcrService.new(@invoice).call if @invoice.document.attached?
+
       redirect_to invoice_path(@invoice), notice: "Facture créée avec succès."
     else
       @folders = current_user.folders.order(:name)

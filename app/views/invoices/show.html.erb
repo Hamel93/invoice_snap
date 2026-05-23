@@ -32,6 +32,15 @@
               <%= @invoice.folders.map(&:name).join(", ") %>
             </p>
           <% end %>
+
+          <% if @invoice.ocr_extracted_text.present? %>
+            <hr>
+
+            <h5 class="mb-3">OCR extrait</h5>
+
+            <pre class="bg-light p-3 rounded"><%= @invoice.ocr_extracted_text %></pre>
+          <% end %>
+
         </div>
       </div>
     </div>
