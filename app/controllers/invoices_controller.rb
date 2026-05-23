@@ -3,64 +3,63 @@ class InvoicesController < ApplicationController
   before_action :set_invoice, only: %i[show edit update destroy]
 
   def index
-    @invoices = current_user.invoices
+    @invoices = current_user.invoices.order(created_at: :desc)
   end
 
   def show
   end
 
   def new
-    @invoice = Invoice.new
-    @folders = current_user.folders.distinct
+    @invoice = current_user.invoices.new
+    @folders = current_user.folders.order(:name)
   end
 
   def create
     @invoice = current_user.invoices.new(invoice_params)
 
     if @invoice.save
-
-      if params[:invoice][:folder_ids].present?
-        params[:invoice][:folder_ids].reject(&:blank?).each do |folder_id|
-          FolderInvoice.create(
-            user: current_user,
-            invoice: @invoice,
-            folder_id: folder_id
-          )
-        end
-      end
-
-      redirect_to invoice_path(@invoice), notice: "Invoice created successfully."
+      update_invoice_folders
+      redirect_to invoice_path(@invoice), notice: "Facture créée avec succès."
     else
-      @folders = current_user.folders.distinct
+      @folders = current_user.folders.order(:name)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @folders = current_user.folders.distinct
+    @folders = current_user.folders.order(:name)
   end
 
   def update
     if @invoice.update(invoice_params)
-      redirect_to invoice_path(@invoice), notice: "Invoice updated successfully."
+      update_invoice_folders
+      redirect_to invoice_path(@invoice), notice: "Facture mise à jour avec succès."
     else
-      @folders = current_user.folders.distinct
+      @folders = current_user.folders.order(:name)
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
     @invoice.destroy
-    redirect_to invoices_path, notice: "Invoice deleted successfully."
+    redirect_to invoices_path, notice: "Facture supprimée avec succès."
   end
 
   def search
+    @query = params[:query].to_s.strip
+
+    @invoices = current_user.invoices
+                            .where("company_name ILIKE ? OR invoice_number ILIKE ? OR category ILIKE ?", "%#{@query}%", "%#{@query}%", "%#{@query}%")
+                            .order(created_at: :desc)
+
+    render :index
   end
 
   def camera
   end
 
   def scan
+    redirect_to new_invoice_path, notice: "OCR à venir. Pour le MVP, entre les informations manuellement."
   end
 
   private
@@ -71,15 +70,23 @@ class InvoicesController < ApplicationController
 
   def invoice_params
     params.require(:invoice).permit(
-      :supplier,
+      :company_name,
       :invoice_number,
       :amount,
-      :vat,
       :due_date,
       :status,
       :category,
-      :extracted_text,
+      :ocr_extracted_text,
       :document
     )
+  end
+
+  def update_invoice_folders
+    return unless params[:invoice][:folder_ids]
+
+    folder_ids = params[:invoice][:folder_ids].reject(&:blank?)
+    folders = current_user.folders.where(id: folder_ids)
+
+    @invoice.folders = folders
   end
 end

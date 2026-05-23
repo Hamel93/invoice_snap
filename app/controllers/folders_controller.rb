@@ -3,28 +3,22 @@ class FoldersController < ApplicationController
   before_action :set_folder, only: %i[show edit update destroy]
 
   def index
-    @folders = current_user.folders.distinct
+    @folders = current_user.folders.order(:name)
   end
 
   def show
-    @invoices = @folder.invoices
+    @invoices = @folder.invoices.order(created_at: :desc)
   end
 
   def new
-    @folder = Folder.new
+    @folder = current_user.folders.new
   end
 
   def create
-    @folder = Folder.new(folder_params)
+    @folder = current_user.folders.new(folder_params)
 
     if @folder.save
-
-      FolderInvoice.create(
-        user: current_user,
-        folder: @folder
-      )
-
-      redirect_to folder_path(@folder), notice: "Folder created successfully."
+      redirect_to folder_path(@folder), notice: "Dossier créé avec succès."
     else
       render :new, status: :unprocessable_entity
     end
@@ -35,7 +29,7 @@ class FoldersController < ApplicationController
 
   def update
     if @folder.update(folder_params)
-      redirect_to folder_path(@folder), notice: "Folder updated successfully."
+      redirect_to folder_path(@folder), notice: "Dossier mis à jour avec succès."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -43,13 +37,13 @@ class FoldersController < ApplicationController
 
   def destroy
     @folder.destroy
-    redirect_to folders_path, notice: "Folder deleted successfully."
+    redirect_to folders_path, notice: "Dossier supprimé avec succès."
   end
 
   private
 
   def set_folder
-    @folder = current_user.folders.distinct.find(params[:id])
+    @folder = current_user.folders.find(params[:id])
   end
 
   def folder_params

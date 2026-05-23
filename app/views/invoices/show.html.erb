@@ -1,2 +1,57 @@
-<h1>Invoices#show</h1>
-<p>Find me in app/views/invoices/show.html.erb</p>
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><%= @invoice.company_name %></h1>
+
+    <div>
+      <%= link_to "Modifier", edit_invoice_path(@invoice), class: "btn btn-outline-dark" %>
+
+      <%= link_to "Supprimer",
+        invoice_path(@invoice),
+        data: {
+          turbo_method: :delete,
+          turbo_confirm: "Supprimer cette facture ?"
+        },
+        class: "btn btn-danger" %>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <p>
+        <strong>Montant :</strong>
+        $<%= @invoice.amount %>
+      </p>
+
+      <p>
+        <strong>Status :</strong>
+        <%= @invoice.status %>
+      </p>
+
+      <p>
+        <strong>Catégorie :</strong>
+        <%= @invoice.category %>
+      </p>
+
+      <p>
+        <strong>Échéance :</strong>
+        <%= @invoice.due_date %>
+      </p>
+
+      <% if @invoice.document.attached? %>
+        <hr>
+
+        <p>
+          <strong>Document :</strong>
+        </p>
+
+        <%= link_to @invoice.document.filename,
+          rails_blob_path(@invoice.document, disposition: "attachment"),
+          class: "btn btn-outline-primary" %>
+      <% end %>
+
+    </div>
+  </div>
+
+</div>

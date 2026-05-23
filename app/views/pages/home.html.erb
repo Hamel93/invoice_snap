@@ -1,5 +1,36 @@
-<h1>Invoice Snap</h1>
+<div class="container py-5">
+  <div class="row align-items-center min-vh-75">
+    <div class="col-lg-7">
+      <span class="badge bg-primary mb-3">MVP Invoice Snap</span>
 
-<p>Smart invoice scanner and organizer.</p>
+      <h1 class="display-4 fw-bold mb-3">
+        Scanne, organise et retrouve tes factures rapidement.
+      </h1>
 
-<%= link_to "Login", new_user_session_path %>
+      <p class="lead text-muted mb-4">
+        Invoice Snap aide les utilisateurs à téléverser, classer et suivre leurs factures dans un espace sécurisé.
+      </p>
+
+      <div class="d-flex gap-2">
+        <%= link_to "Commencer", new_user_registration_path, class: "btn btn-primary btn-lg" %>
+        <%= link_to "Connexion", new_user_session_path, class: "btn btn-outline-dark btn-lg" %>
+      </div>
+    </div>
+
+    <div class="col-lg-5 mt-5 mt-lg-0">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3">Fonctions MVP</h5>
+
+          <ul class="list-unstyled mb-0">
+            <li class="mb-3">✅ Upload PDF ou image</li>
+            <li class="mb-3">✅ Dashboard simple</li>
+            <li class="mb-3">✅ Organisation par dossiers</li>
+            <li class="mb-3">✅ Suivi des échéances</li>
+            <li>🚧 OCR intelligent à venir</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

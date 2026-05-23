@@ -1,0 +1,54 @@
+<%= form_with model: invoice, local: true do |f| %>
+
+  <div class="mb-3">
+    <%= f.label :company_name, "Entreprise", class: "form-label" %>
+    <%= f.text_field :company_name, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :invoice_number, "Numéro de facture", class: "form-label" %>
+    <%= f.text_field :invoice_number, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :amount, "Montant", class: "form-label" %>
+    <%= f.number_field :amount, step: 0.01, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :due_date, "Date d'échéance", class: "form-label" %>
+    <%= f.date_field :due_date, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :status, "Status", class: "form-label" %>
+    <%= f.select :status,
+      [["Pending", "pending"], ["Paid", "paid"], ["Overdue", "overdue"]],
+      {},
+      class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :category, "Catégorie", class: "form-label" %>
+    <%= f.text_field :category, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :document, "Document", class: "form-label" %>
+    <%= f.file_field :document, class: "form-control" %>
+  </div>
+
+  <div class="mb-4">
+    <%= f.label :folder_ids, "Dossiers", class: "form-label" %>
+
+    <%= f.collection_select :folder_ids,
+      @folders,
+      :id,
+      :name,
+      {},
+      { multiple: true, class: "form-select" } %>
+  </div>
+
+  <%= f.submit class: "btn btn-primary" %>
+
+<% end %>

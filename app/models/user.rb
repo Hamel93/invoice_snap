@@ -6,7 +6,5 @@ class User < ApplicationRecord
          :validatable
 
   has_many :invoices, dependent: :destroy
-
-  has_many :folder_invoices, dependent: :destroy
-  has_many :folders, through: :folder_invoices
+  has_many :folders, dependent: :destroy
 end

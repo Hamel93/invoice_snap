@@ -1,2 +1,46 @@
-<h1>Invoices#index</h1>
-<p>Find me in app/views/invoices/index.html.erb</p>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Mes factures</h1>
+
+    <%= link_to "Nouvelle facture", new_invoice_path, class: "btn btn-primary" %>
+  </div>
+
+  <% if @invoices.any? %>
+    <div class="row">
+      <% @invoices.each do |invoice| %>
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <h5 class="card-title">
+                <%= invoice.company_name %>
+              </h5>
+
+              <p class="mb-2">
+                <strong>Montant :</strong>
+                $<%= invoice.amount %>
+              </p>
+
+              <p class="mb-2">
+                <strong>Status :</strong>
+                <%= invoice.status || "pending" %>
+              </p>
+
+              <p class="mb-3">
+                <strong>Échéance :</strong>
+                <%= invoice.due_date %>
+              </p>
+
+              <%= link_to "Voir", invoice_path(invoice), class: "btn btn-dark btn-sm" %>
+
+              <%= link_to "Modifier", edit_invoice_path(invoice), class: "btn btn-outline-secondary btn-sm" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      Aucune facture pour le moment.
+    </div>
+  <% end %>
+</div>

@@ -10,3 +10,25 @@
 // Your CSS partials
 @import "components/index";
 @import "pages/index";
+
+/* Invoice Snap MVP styles */
+body {
+  background-color: #f5f7fb;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+}
+
+.navbar {
+  margin-bottom: 24px;
+}
+
+.btn {
+  border-radius: 8px;
+}
