@@ -1,114 +1,54 @@
-puts "Cleaning database..."
+# Invoice Snap — demo data (idempotent).
+# Run with:  bin/rails db:seed
+# Login:     demo@invoicesnap.fr  /  password
 
-Reminder.destroy_all
-FolderInvoice.destroy_all
-Folder.destroy_all
-Invoice.destroy_all
-User.destroy_all
+puts "Seeding Invoice Snap demo data…"
 
-puts "Creating users..."
+user = User.find_or_initialize_by(email: "demo@invoicesnap.fr")
+user.password = "password"
+user.password_confirmation = "password"
+user.save!
 
-user = User.create!(
-  email: "demo@invoicesnap.com",
-  password: "password123"
-)
+# Reset previous demo data so the seed stays idempotent.
+user.invoices.destroy_all
+FOLDER_NAMES = ["Factures", "Reçus", "Contrats", "Devis", "Archive 2024"].freeze
+Folder.where(name: FOLDER_NAMES).destroy_all
 
-puts "Creating folders..."
+folders = FOLDER_NAMES.index_with { |name| Folder.create!(name: name) }
 
-utilities_folder = Folder.create!(
-  name: "Utilities",
-  user: user
-)
+invoices = [
+  { company: "TechStartup SAS",     number: "FA-0125", amount: 1200, status: "pending",  category: "Prestation de service", folder: "Factures", created_ago: 2,   due_in: 18,  remind_in: 18 },
+  { company: "TechStartup SAS",     number: "FA-0124", amount: 2400, status: "pending",  category: "Prestation de service", folder: "Factures", created_ago: 8,   due_in: 12,  remind_in: 12 },
+  { company: "Design Studio Paris", number: "FA-0123", amount: 850,  status: "paid",     category: "Design",                folder: "Factures", created_ago: 14,  due_in: -2 },
+  { company: "Agence Créative",     number: "FA-0122", amount: 3200, status: "overdue",  category: "Conseil",               folder: "Factures", created_ago: 22,  due_in: -9,  remind_in: -3 },
+  { company: "Studio Lumière",      number: "FA-0121", amount: 1500, status: "paid",     category: "Photographie",          folder: "Factures", created_ago: 38 },
+  { company: "Carrefour Pro",       number: "REC-0044", amount: 84,  status: "paid",     category: "Fournitures",           folder: "Reçus",    created_ago: 16 },
+  { company: "SNCF",                number: "REC-0043", amount: 124, status: "paid",     category: "Déplacement",           folder: "Reçus",    created_ago: 44 },
+  { company: "TechStartup SAS",     number: "DEV-0042", amount: 3500, status: "accepted", category: "Devis",                folder: "Devis",    created_ago: 30,  remind_in: 6 },
+  { company: "TechStartup SAS",     number: "CT-2025",  amount: 0,    status: "signed",   category: "Contrat",              folder: "Contrats", created_ago: 70 },
+  { company: "Freelance Network",   number: "FA-0120", amount: 980,  status: "paid",     category: "Prestation de service", folder: "Factures", created_ago: 62 },
+  { company: "Agence Créative",     number: "FA-0119", amount: 1800, status: "paid",     category: "Conseil",               folder: "Archive 2024", created_ago: 96 },
+  { company: "Design Studio Paris", number: "FA-0118", amount: 1450, status: "paid",     category: "Design",                folder: "Archive 2024", created_ago: 120 }
+]
 
-business_folder = Folder.create!(
-  name: "Business",
-  user: user
-)
+invoices.each do |d|
+  invoice = user.invoices.create!(
+    company_name:       d[:company],
+    invoice_number:     d[:number],
+    amount:             d[:amount],
+    status:             d[:status],
+    category:           d[:category],
+    due_date:           (d[:due_in] ? Date.today + d[:due_in] : nil),
+    ocr_extracted_text: "#{d[:company]} — #{d[:number]} — #{d[:amount]} € TTC",
+    created_at:         d[:created_ago].days.ago
+  )
 
-personal_folder = Folder.create!(
-  name: "Personal",
-  user: user
-)
+  FolderInvoice.create!(user: user, invoice: invoice, folder: folders[d[:folder]])
 
-puts "Creating invoices..."
+  if d[:remind_in]
+    Reminder.create!(invoice: invoice, reminder_date: Date.today + d[:remind_in], sent: d[:remind_in].negative?)
+  end
+end
 
-invoice_1 = Invoice.create!(
-  company_name: "Hydro Quebec",
-  invoice_number: "HQ-2026-001",
-  amount: 189.45,
-  due_date: Date.today + 7.days,
-  status: "pending",
-  category: "Electricity",
-  user: user
-)
-
-invoice_2 = Invoice.create!(
-  company_name: "Videotron",
-  invoice_number: "VID-2026-002",
-  amount: 124.99,
-  due_date: Date.today - 3.days,
-  status: "overdue",
-  category: "Internet",
-  user: user
-)
-
-invoice_3 = Invoice.create!(
-  company_name: "Amazon Web Services",
-  invoice_number: "AWS-2026-003",
-  amount: 542.10,
-  due_date: Date.today + 14.days,
-  status: "pending",
-  category: "Cloud",
-  user: user
-)
-
-invoice_4 = Invoice.create!(
-  company_name: "Apple",
-  invoice_number: "APL-2026-004",
-  amount: 89.99,
-  due_date: Date.today - 10.days,
-  status: "paid",
-  category: "Software",
-  user: user
-)
-
-puts "Connecting invoices to folders..."
-
-FolderInvoice.create!(
-  folder: utilities_folder,
-  invoice: invoice_1
-)
-
-FolderInvoice.create!(
-  folder: utilities_folder,
-  invoice: invoice_2
-)
-
-FolderInvoice.create!(
-  folder: business_folder,
-  invoice: invoice_3
-)
-
-FolderInvoice.create!(
-  folder: personal_folder,
-  invoice: invoice_4
-)
-
-puts "Creating reminders..."
-
-Reminder.create!(
-  invoice: invoice_1,
-  reminder_date: Date.today + 5.days,
-  sent: false
-)
-
-Reminder.create!(
-  invoice: invoice_2,
-  reminder_date: Date.today,
-  sent: false
-)
-
-puts "Seeds created successfully!"
-puts "Demo user:"
-puts "Email: demo@invoicesnap.com"
-puts "Password: password123"
+puts "✓ #{user.invoices.count} factures, #{folders.size} classeurs, #{Reminder.joins(:invoice).where(invoices: { user_id: user.id }).count} rappels"
+puts "✓ Connexion : demo@invoicesnap.fr  /  password"

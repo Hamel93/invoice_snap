@@ -1,37 +1,57 @@
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Rappels</h1>
-    <%= link_to "Nouveau rappel", new_reminder_path, class: "btn btn-primary" %>
+<% content_for :title, "Calendrier" %>
+<%
+  today   = Date.today
+  first   = today.beginning_of_month
+  offset  = (first.wday + 6) % 7
+  days_in = today.end_of_month.day
+  rem     = @reminders.to_a
+  rdays   = rem.map(&:reminder_date).compact.select { |d| d.month == today.month && d.year == today.year }.map(&:day)
+  upcoming = rem.select { |r| r.reminder_date && r.reminder_date >= today }.sort_by(&:reminder_date)
+%>
+
+<%= render "shared/screen_header", title: "Calendrier",
+      subtitle: "#{ApplicationHelper::FR_MONTHS[today.month].capitalize} #{today.year} · #{pluralize(rem.size, "échéance")}" %>
+
+<div class="app-pad" style="margin-top:18px;">
+  <div class="cal">
+    <div class="cal__head">
+      <span class="app-header__back" style="background:#f0f0f6;color:#44445e;"><i class="fa-solid fa-chevron-left"></i></span>
+      <span class="fw-bold"><%= ApplicationHelper::FR_MONTHS[today.month].capitalize %> <%= today.year %></span>
+      <span class="app-header__back" style="background:#f0f0f6;color:#44445e;"><i class="fa-solid fa-chevron-right"></i></span>
+    </div>
+    <div class="cal__grid">
+      <% %w[Lun Mar Mer Jeu Ven Sam Dim].each do |d| %><div class="cal__dow"><%= d %></div><% end %>
+      <% offset.times do %><div class="cal__cell"></div><% end %>
+      <% (1..days_in).each do |day| %>
+        <div class="cal__cell <%= 'is-today' if day == today.day %>">
+          <span><%= day %></span>
+          <% if rdays.include?(day) %><span class="cal__dot" style="background:<%= day == today.day ? '#fff' : '#d97706' %>;"></span><% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
-  <% if @reminders.any? %>
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Facture</th>
-              <th>Date du rappel</th>
-              <th>Envoyé</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @reminders.each do |reminder| %>
-              <tr>
-                <td><%= reminder.invoice.company_name %></td>
-                <td><%= reminder.reminder_date %></td>
-                <td><%= reminder.sent ? "Oui" : "Non" %></td>
-                <td>
-                  <%= link_to "Voir facture", invoice_path(reminder.invoice), class: "btn btn-sm btn-outline-dark" %>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
+  <h2 class="section-title section-gap mb-2">Échéances à venir</h2>
+  <% if upcoming.any? %>
+    <% upcoming.first(6).each do |r| %>
+      <% inv = r.invoice %>
+      <%= link_to invoice_path(inv), class: "list-row" do %>
+        <div class="text-center" style="width:46px;">
+          <div class="fw-bold" style="color:#4039d4;line-height:1;font-size:1.05rem;"><%= r.reminder_date.day %></div>
+          <div class="faint text-uppercase" style="font-size:.58rem;"><%= ApplicationHelper::FR_MONTHS_SHORT[r.reminder_date.month] %></div>
+        </div>
+        <div class="list-row__body">
+          <div class="list-row__title"><%= inv.company_name.presence || "Facture" %></div>
+          <div class="list-row__sub">Échéance <%= short_date(r.reminder_date) %></div>
+        </div>
+        <div class="list-row__amount"><%= eur(inv.amount) %></div>
+      <% end %>
+    <% end %>
   <% else %>
-    <div class="alert alert-info">Aucun rappel pour le moment.</div>
+    <div class="empty-state card-soft"><i class="fa-regular fa-calendar d-block"></i>Aucune échéance à venir.</div>
+  <% end %>
+
+  <%= link_to new_reminder_path, class: "btn btn-grad w-100 mt-3" do %>
+    <i class="fa-solid fa-plus me-2"></i>Ajouter un rappel
   <% end %>
 </div>

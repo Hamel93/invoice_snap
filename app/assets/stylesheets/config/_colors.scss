@@ -1,10 +1,36 @@
-// Define variables for your color scheme
+// Invoice Snap — color scheme (mirrors the Figma design system)
 
-// For example:
-$red: #FD1015;
-$blue: #0D6EFD;
-$yellow: #FFC65A;
-$orange: #E67E22;
-$green: #1EDD88;
-$gray: #0E0000;
-$light-gray: #F4F4F4;
+// Brand
+$is-primary:     #4039d4;
+$is-primary-dk:  #2e26b8;
+$is-navy:        #0d0a3e;
+$is-primary-lt:  #5b51e8;
+$is-lilac:       #c9c5fa;
+$is-lilac-bg:    #eceafe;
+
+// Surfaces & text
+$is-bg:          #f0f0f6;
+$is-surround:    #e6e6f0;
+$is-white:       #ffffff;
+$is-ink:         #0a0a12;
+$is-ink-2:       #44445e;
+$is-muted:       #6b6b88;
+$is-faint:       #9494ae;
+$is-line:        #e0e0eb;
+
+// Status
+$is-ok:          #16a34a;  $is-ok-bg:     #dcfce7;
+$is-warn:        #d97706;  $is-warn-bg:   #fef3c7;  $is-warn-bd: #fde68a;  $is-warn-ink: #92400e;
+$is-danger:      #dc2626;  $is-danger-bg: #fee2e2;
+
+// Brand gradient (purple headers / splash)
+$is-gradient: linear-gradient(160deg, #0d0a3e 0%, #2e26b8 55%, #4039d4 100%);
+
+// Legacy aliases kept for the template's partials
+$blue:       $is-primary;
+$green:      $is-ok;
+$red:        $is-danger;
+$orange:     $is-warn;
+$yellow:     #FFC65A;
+$gray:       $is-ink;
+$light-gray: $is-bg;

@@ -1,0 +1,17 @@
+<%#
+  Reusable gradient header.
+  locals: title:, subtitle: nil, back: nil, rounded: true, action: nil (raw html)
+%>
+<header class="app-header <%= 'app-header--rounded' if local_assigns.fetch(:rounded, true) %>">
+  <div class="app-header__bar">
+    <% if local_assigns[:back].present? %>
+      <%= link_to local_assigns[:back], class: "app-header__back" do %><i class="fa-solid fa-chevron-left"></i><% end %>
+    <% end %>
+    <h1 class="app-header__title"><%= title %></h1>
+    <div class="app-header__spacer"></div>
+    <%= local_assigns[:action] %>
+  </div>
+  <% if local_assigns[:subtitle].present? %>
+    <p class="app-header__sub"><%= subtitle %></p>
+  <% end %>
+</header>

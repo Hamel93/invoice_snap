@@ -45,6 +45,18 @@ class InvoicesController < ApplicationController
 
   def destroy
     @invoice.destroy
+    redirect_to invoices_path, notice: "Facture supprimée."
+  end
+
+  def search
+    @query = params[:q].to_s.strip
+    scope  = current_user.invoices.order(created_at: :desc)
+    @invoices =
+      if @query.present?
+        scope.where("company_name ILIKE :q OR invoice_number ILIKE :q OR category ILIKE :q", q: "%#{@query}%")
+      else
+        scope
+      end
     redirect_to invoices_path, notice: "Facture supprimée avec succès."
   end
 

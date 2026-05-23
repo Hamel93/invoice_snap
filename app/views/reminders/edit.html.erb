@@ -1,2 +1,7 @@
-<h1>Reminders#edit</h1>
-<p>Find me in app/views/reminders/edit.html.erb</p>
+<% content_for :title, "Modifier le rappel" %>
+
+<%= render "shared/screen_header", title: "Modifier le rappel", back: reminders_path %>
+
+<div class="app-pad" style="margin-top:18px;">
+  <%= render "form", reminder: @reminder, invoices: @invoices %>
+</div>

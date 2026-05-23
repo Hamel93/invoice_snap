@@ -1,15 +1,7 @@
-<div class="container py-4">
-  <h1 class="mb-4">Modifier le dossier</h1>
+<% content_for :title, "Modifier le classeur" %>
 
-  <%= render "shared/form_errors", object: @folder %>
+<%= render "shared/screen_header", title: "Modifier le classeur", back: folder_path(@folder) %>
 
-  <%= form_with model: @folder, local: true do |f| %>
-    <div class="mb-3">
-      <%= f.label :name, "Nom du dossier", class: "form-label" %>
-      <%= f.text_field :name, class: "form-control" %>
-    </div>
-
-    <%= f.submit "Mettre à jour", class: "btn btn-primary" %>
-    <%= link_to "Retour", folders_path, class: "btn btn-outline-secondary" %>
-  <% end %>
+<div class="app-pad" style="margin-top:18px;">
+  <%= render "form", folder: @folder %>
 </div>

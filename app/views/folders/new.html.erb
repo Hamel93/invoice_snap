@@ -1,15 +1,7 @@
-<div class="container py-4">
-  <h1 class="mb-4">Nouveau dossier</h1>
+<% content_for :title, "Nouveau classeur" %>
 
-  <%= render "shared/form_errors", object: @folder %>
+<%= render "shared/screen_header", title: "Nouveau classeur", back: folders_path %>
 
-  <%= form_with model: @folder, local: true do |f| %>
-    <div class="mb-3">
-      <%= f.label :name, "Nom du dossier", class: "form-label" %>
-      <%= f.text_field :name, class: "form-control", placeholder: "Ex: Taxes, Maison, Business" %>
-    </div>
-
-    <%= f.submit "Créer", class: "btn btn-primary" %>
-    <%= link_to "Retour", folders_path, class: "btn btn-outline-secondary" %>
-  <% end %>
+<div class="app-pad" style="margin-top:18px;">
+  <%= render "form", folder: @folder %>
 </div>

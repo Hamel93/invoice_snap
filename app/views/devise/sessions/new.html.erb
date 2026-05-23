@@ -1,47 +1,46 @@
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-      <div class="card shadow-sm">
-        <div class="card-body p-4">
-          <h2 class="mb-4">Connexion</h2>
+<% content_for :title, "Connexion" %>
 
-          <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-            <div class="form-inputs">
-              <%= f.input :email,
-                          label: "Email",
-                          required: false,
-                          autofocus: true,
-                          input_html: {
-                            autocomplete: "email",
-                            name: "user[email]"
-                          } %>
+<section class="auth-hero" style="padding-bottom:42px;">
+  <%= link_to root_path, class: "app-header__back d-inline-flex mb-4" do %><i class="fa-solid fa-chevron-left"></i><% end %>
+  <h1 style="font-size:1.8rem;font-weight:800;">Bon retour 👋</h1>
+  <p class="mb-0" style="color:#c9c5fa;">Connectez-vous à votre espace Invoice Snap.</p>
+</section>
 
-              <%= f.input :password,
-                          label: "Mot de passe",
-                          required: false,
-                          input_html: {
-                            autocomplete: "current-password",
-                            name: "user[password]"
-                          } %>
+<section class="app-pad" style="margin-top:-26px;position:relative;z-index:2;">
+  <div class="card-soft">
+    <a href="#" class="btn-social mb-2"><i class="fa-brands fa-google" style="color:#4285F4;"></i> Continuer avec Google</a>
+    <a href="#" class="btn-social is-dark"><i class="fa-brands fa-apple"></i> Continuer avec Apple</a>
 
-              <% if devise_mapping.rememberable? %>
-                <%= f.input :remember_me,
-                            as: :boolean,
-                            label: "Se souvenir de moi",
-                            input_html: { checked: true } %>
-              <% end %>
-            </div>
+    <div class="divider-or">ou</div>
 
-            <div class="form-actions mt-3">
-              <%= f.button :submit, "Se connecter", class: "btn btn-primary w-100" %>
-            </div>
-          <% end %>
-
-          <div class="mt-3">
-            <%= render "devise/shared/links" %>
-          </div>
-        </div>
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="mb-3">
+        <%= f.label :email, "Adresse e-mail", class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email",
+              placeholder: "vous@email.fr", class: "form-control" %>
       </div>
-    </div>
+
+      <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <%= f.label :password, "Mot de passe", class: "form-label mb-0" %>
+          <%= link_to "Mot de passe oublié ?", new_user_password_path, style: "font-size:.76rem;font-weight:600;" %>
+        </div>
+        <%= f.password_field :password, autocomplete: "current-password",
+              placeholder: "••••••••", class: "form-control" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <div class="form-check mb-3">
+          <%= f.check_box :remember_me, class: "form-check-input" %>
+          <%= f.label :remember_me, "Se souvenir de moi", class: "form-check-label", style: "font-size:.82rem;" %>
+        </div>
+      <% end %>
+
+      <%= f.submit "Se connecter", class: "btn btn-grad btn-lg w-100" %>
+    <% end %>
   </div>
-</div>
+
+  <p class="text-center muted mt-4 mb-4" style="font-size:.86rem;">
+    Pas encore de compte ? <%= link_to "Créer un compte", new_user_registration_path, class: "fw-semibold" %>
+  </p>
+</section>

@@ -1,5 +1,7 @@
-<div class="container py-4">
-  <h1 class="mb-4">Modifier la facture</h1>
+<% content_for :title, "Modifier la facture" %>
 
-  <%= render "form", invoice: @invoice %>
+<%= render "shared/screen_header", title: "Modifier la facture", back: invoice_path(@invoice) %>
+
+<div class="app-pad" style="margin-top:18px;">
+  <%= render "form", invoice: @invoice, folders: @folders %>
 </div>

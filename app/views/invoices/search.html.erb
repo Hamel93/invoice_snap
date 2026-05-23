@@ -1,0 +1,41 @@
+<% content_for :title, "Recherche" %>
+<% results = @invoices.to_a %>
+
+<header class="app-header app-header--rounded">
+  <h1 class="app-header__title mb-3">Recherche</h1>
+  <%= form_with url: search_invoices_path, method: :get do %>
+    <div style="position:relative;">
+      <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:14px;top:14px;color:#9494ae;"></i>
+      <%= text_field_tag :q, @query, placeholder: "Facture, client, catégorie…",
+            autofocus: true, class: "form-control", style: "padding-left:40px;border:0;" %>
+    </div>
+  <% end %>
+</header>
+
+<div class="app-pad" style="margin-top:18px;">
+  <% if @query.present? %>
+    <p class="muted mb-3" style="font-size:.85rem;">
+      <strong class="text-dark"><%= pluralize(results.size, "résultat") %></strong> pour « <%= @query %> »
+    </p>
+    <% if results.any? %>
+      <% results.each do |invoice| %>
+        <%= render "shared/invoice_row", invoice: invoice %>
+      <% end %>
+    <% else %>
+      <div class="empty-state card-soft">
+        <i class="fa-solid fa-magnifying-glass d-block"></i>
+        Aucun résultat pour « <%= @query %> ».
+      </div>
+    <% end %>
+  <% else %>
+    <h2 class="section-title mb-3">Recherches récentes</h2>
+    <div class="card-soft">
+      <% ["Factures en attente", "TechStartup", "Mai 2025", "Contrats"].each_with_index do |q, i| %>
+        <%= link_to search_invoices_path(q: q), class: "d-flex align-items-center gap-3 text-decoration-none text-dark py-2" do %>
+          <i class="fa-regular fa-clock faint"></i><span style="font-size:.88rem;"><%= q %></span>
+        <% end %>
+        <% unless i == 3 %><div class="divider-soft"></div><% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,30 @@
+<% content_for :title, "Scanner" %>
+<% content_for :no_nav, true %>
+
+<div class="scanner">
+  <div class="scanner__top">
+    <%= link_to dashboard_path, class: "scanner__icon-btn" do %><i class="fa-solid fa-xmark"></i><% end %>
+    <span class="fw-semibold">Scanner un document</span>
+    <button type="button" class="scanner__icon-btn"><i class="fa-solid fa-bolt"></i></button>
+  </div>
+
+  <div class="scanner__stage">
+    <div class="scanner__frame">
+      <span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>
+    </div>
+    <div class="scanner__hint">Placez votre facture dans le cadre</div>
+  </div>
+
+  <div class="scanner__bottom">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <%= link_to new_invoice_path, class: "scanner__icon-btn" do %><i class="fa-solid fa-images"></i><% end %>
+      <%= link_to new_invoice_path, class: "scanner__shutter" do %>
+        <i class="fa-solid fa-camera" style="color:#0b0826;font-size:1.4rem;"></i>
+      <% end %>
+      <button type="button" class="scanner__icon-btn"><i class="fa-solid fa-rotate"></i></button>
+    </div>
+    <%= link_to new_invoice_path, class: "btn btn-grad w-100" do %>
+      <i class="fa-solid fa-arrow-up-from-bracket me-2"></i>Importer depuis la galerie
+    <% end %>
+  </div>
+</div>

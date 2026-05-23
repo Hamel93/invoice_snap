@@ -1,37 +1,30 @@
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1><%= @folder.name %></h1>
-    <%= link_to "Retour", folders_path, class: "btn btn-outline-secondary" %>
+<% content_for :title, @folder.name %>
+
+<header class="app-header app-header--rounded">
+  <div class="app-header__bar">
+    <%= link_to folders_path, class: "app-header__back" do %><i class="fa-solid fa-chevron-left"></i><% end %>
+    <h1 class="app-header__title text-truncate"><%= @folder.name %></h1>
+    <div class="app-header__spacer"></div>
+    <%= link_to edit_folder_path(@folder), class: "app-header__icon" do %><i class="fa-solid fa-pen"></i><% end %>
   </div>
+  <p class="app-header__sub"><%= pluralize(@invoices.count, "document") %></p>
+</header>
 
+<div class="app-pad" style="margin-top:18px;">
   <% if @invoices.any? %>
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h5 class="mb-3">Factures dans ce dossier</h5>
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Entreprise</th>
-              <th>Montant</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @invoices.each do |invoice| %>
-              <tr>
-                <td><%= invoice.company_name %></td>
-                <td>$<%= invoice.amount %></td>
-                <td><%= invoice.status %></td>
-                <td><%= link_to "Voir", invoice_path(invoice), class: "btn btn-sm btn-outline-dark" %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <% @invoices.each do |invoice| %>
+      <%= render "shared/invoice_row", invoice: invoice %>
+    <% end %>
   <% else %>
-    <div class="alert alert-info">Aucune facture dans ce dossier.</div>
+    <div class="empty-state card-soft">
+      <i class="fa-solid fa-folder-open d-block"></i>
+      Ce classeur est encore vide.
+    </div>
+  <% end %>
+
+  <%= button_to folder_path(@folder), method: :delete,
+        class: "btn w-100 mt-3", style: "background:#fee2e2;color:#dc2626;font-weight:600;",
+        data: { turbo_confirm: "Supprimer ce classeur ?" } do %>
+    <i class="fa-solid fa-trash me-2"></i>Supprimer le classeur
   <% end %>
 </div>
