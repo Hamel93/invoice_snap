@@ -1,2 +1,7 @@
-<h1>Folders#edit</h1>
-<p>Find me in app/views/folders/edit.html.erb</p>
+<% content_for :title, "Modifier le classeur" %>
+
+<%= render "shared/screen_header", title: "Modifier le classeur", back: folder_path(@folder) %>
+
+<div class="app-pad" style="margin-top:18px;">
+  <%= render "form", folder: @folder %>
+</div>

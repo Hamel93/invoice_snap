@@ -3,7 +3,10 @@ Rails.application.routes.draw do
 
   root to: "pages#home"
 
-  get "/dashboard", to: "pages#dashboard"
+  get "/dashboard",     to: "pages#dashboard"
+  get "/profile",       to: "pages#profile"
+  get "/notifications", to: "pages#notifications"
+  get "/statistics",    to: "pages#statistics"
 
   resources :invoices do
     collection do

@@ -1,0 +1,48 @@
+<% content_for :title, "Profil" %>
+<%
+  name     = current_user.email.split("@").first.capitalize
+  invoices = @invoices.to_a
+  ca       = invoices.select { |i| i.status.to_s.downcase == "paid" }.sum { |i| i.amount.to_f }
+  clients  = invoices.map(&:company_name).compact_blank.uniq.size
+%>
+
+<header class="app-header app-header--rounded app-header--pull text-center">
+  <div class="avatar-initial avatar-initial--lg mx-auto" style="background:rgba(255,255,255,.18);color:#fff;"><%= initials(name) %></div>
+  <div class="mt-3" style="font-size:1.2rem;font-weight:700;"><%= name %></div>
+  <div class="app-header__sub mt-1"><%= current_user.email %></div>
+</header>
+
+<div class="app-pad">
+  <div class="card-soft card-overlap">
+    <div class="stat-strip">
+      <div class="stat-strip__col"><div class="stat-strip__num"><%= invoices.size %></div><div class="stat-strip__lbl">Factures</div></div>
+      <div class="stat-strip__col"><div class="stat-strip__num"><%= eur(ca) %></div><div class="stat-strip__lbl">CA encaissé</div></div>
+      <div class="stat-strip__col"><div class="stat-strip__num"><%= clients %></div><div class="stat-strip__lbl">Clients</div></div>
+    </div>
+  </div>
+
+  <div class="card-soft section-gap p-0" style="overflow:hidden;">
+    <% menu = [
+      ["fa-user",          "Mon profil",     edit_user_registration_path],
+      ["fa-shield-halved", "Sécurité",       edit_user_registration_path],
+      ["fa-bell",          "Notifications",  notifications_path],
+      ["fa-chart-simple",  "Statistiques",   statistics_path],
+      ["fa-folder",        "Mes classeurs",  folders_path],
+      ["fa-calendar",      "Calendrier",     reminders_path]
+    ] %>
+    <% menu.each_with_index do |(icon, label, url), i| %>
+      <%= link_to url, class: "d-flex align-items-center gap-3 text-decoration-none text-dark px-3 py-3" do %>
+        <span class="avatar-initial" style="width:36px;height:36px;background:#eceafe;color:#4039d4;"><i class="fa-solid <%= icon %>"></i></span>
+        <span class="flex-fill fw-semibold" style="font-size:.9rem;"><%= label %></span>
+        <i class="fa-solid fa-chevron-right faint" style="font-size:.8rem;"></i>
+      <% end %>
+      <% unless i == menu.size - 1 %><div class="divider-soft" style="margin:0 16px;"></div><% end %>
+    <% end %>
+  </div>
+
+  <%= button_to destroy_user_session_path, method: :delete, class: "btn w-100 mt-3",
+        style: "background:#fee2e2;color:#dc2626;font-weight:600;" do %>
+    <i class="fa-solid fa-right-from-bracket me-2"></i>Se déconnecter
+  <% end %>
+  <p class="text-center faint mt-3 mb-4" style="font-size:.72rem;">Invoice Snap · v1.0</p>
+</div>

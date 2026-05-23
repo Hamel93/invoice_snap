@@ -6,13 +6,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Invoice Snap">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#4039d4">
+    <meta name="theme-color" content="#0d0a3e">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= yield :head %>
 
     <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
@@ -22,8 +21,7 @@
   <body>
     <div class="app-wrap">
       <div class="flash-stack"><%= render "shared/flashes" %></div>
-      <main class="app-main"><%= yield %></main>
-      <%= render "shared/bottom_nav" if user_signed_in? && !content_for?(:no_nav) %>
+      <main class="app-main app-main--flush"><%= yield %></main>
     </div>
   </body>
 </html>

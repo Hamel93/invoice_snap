@@ -1,2 +1,7 @@
-<h1>Folders#new</h1>
-<p>Find me in app/views/folders/new.html.erb</p>
+<% content_for :title, "Nouveau classeur" %>
+
+<%= render "shared/screen_header", title: "Nouveau classeur", back: folders_path %>
+
+<div class="app-pad" style="margin-top:18px;">
+  <%= render "form", folder: @folder %>
+</div>

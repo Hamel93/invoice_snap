@@ -1,0 +1,61 @@
+<%# locals: invoice:, folders: %>
+<%= form_with model: invoice, class: "card-soft" do |f| %>
+  <% if invoice.errors.any? %>
+    <div class="alert alert-danger py-2" style="font-size:.82rem;"><%= invoice.errors.full_messages.first %></div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :company_name, "Client", class: "form-label" %>
+    <%= f.text_field :company_name, class: "form-control", placeholder: "Nom du client" %>
+  </div>
+
+  <div class="row g-2 mb-3">
+    <div class="col-7">
+      <%= f.label :invoice_number, "N° de facture", class: "form-label" %>
+      <%= f.text_field :invoice_number, class: "form-control", placeholder: "FA-0000" %>
+    </div>
+    <div class="col-5">
+      <%= f.label :amount, "Montant (€)", class: "form-label" %>
+      <%= f.number_field :amount, step: :any, class: "form-control", placeholder: "0,00" %>
+    </div>
+  </div>
+
+  <div class="row g-2 mb-3">
+    <div class="col-6">
+      <%= f.label :due_date, "Échéance", class: "form-label" %>
+      <%= f.date_field :due_date, class: "form-control" %>
+    </div>
+    <div class="col-6">
+      <%= f.label :status, "Statut", class: "form-label" %>
+      <%= f.select :status,
+            options_for_select([["En attente", "pending"], ["Payée", "paid"], ["En retard", "overdue"]], invoice.status),
+            { include_blank: "—" }, class: "form-select" %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :category, "Catégorie", class: "form-label" %>
+    <%= f.text_field :category, class: "form-control", placeholder: "Prestation de service" %>
+  </div>
+
+  <% if folders.present? %>
+    <div class="mb-3">
+      <label class="form-label">Classeurs</label>
+      <% folders.each do |folder| %>
+        <div class="form-check">
+          <%= check_box_tag "invoice[folder_ids][]", folder.id, invoice.folder_ids.include?(folder.id),
+                class: "form-check-input", id: "folder_#{folder.id}" %>
+          <label class="form-check-label" for="folder_<%= folder.id %>"><%= folder.name %></label>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="mb-4">
+    <%= f.label :document, "Document (PDF, image)", class: "form-label" %>
+    <%= f.file_field :document, class: "form-control" %>
+  </div>
+
+  <%= f.submit (invoice.persisted? ? "Enregistrer les modifications" : "Enregistrer le document"),
+        class: "btn btn-grad w-100" %>
+<% end %>

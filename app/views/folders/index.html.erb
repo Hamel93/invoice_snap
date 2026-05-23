@@ -1,2 +1,44 @@
-<h1>Folders#index</h1>
-<p>Find me in app/views/folders/index.html.erb</p>
+<% content_for :title, "Classeurs" %>
+<% total_docs = @folders.sum { |f| f.invoices.count } %>
+
+<header class="app-header app-header--rounded">
+  <div class="app-header__bar">
+    <h1 class="app-header__title">Mes Classeurs</h1>
+    <div class="app-header__spacer"></div>
+    <%= link_to new_folder_path, class: "app-header__icon" do %><i class="fa-solid fa-plus"></i><% end %>
+  </div>
+  <p class="app-header__sub"><%= total_docs %> documents · classés automatiquement</p>
+</header>
+
+<div class="app-pad" style="margin-top:18px;">
+  <div class="chip-row mb-3">
+    <span class="chip is-active">Tout</span>
+    <span class="chip">Factures</span>
+    <span class="chip">Reçus</span>
+    <span class="chip">Contrats</span>
+    <span class="chip">Devis</span>
+  </div>
+
+  <% colors = [["#eceafe", "#4039d4", "fa-folder"], ["#dcfce7", "#16a34a", "fa-receipt"],
+               ["#fef3c7", "#d97706", "fa-file-contract"], ["#eceafe", "#5b51e8", "fa-file-lines"],
+               ["#fee2e2", "#dc2626", "fa-box-archive"]] %>
+  <div class="row g-3">
+    <% @folders.each_with_index do |folder, i| %>
+      <% c = colors[i % colors.size] %>
+      <div class="col-6">
+        <%= link_to folder_path(folder), class: "folder-card" do %>
+          <div class="folder-card__icon" style="background:<%= c[0] %>;color:<%= c[1] %>;"><i class="fa-solid <%= c[2] %>"></i></div>
+          <div class="folder-card__name text-truncate"><%= folder.name %></div>
+          <div class="folder-card__count"><%= pluralize(folder.invoices.count, "document") %></div>
+        <% end %>
+      </div>
+    <% end %>
+    <div class="col-6">
+      <%= link_to new_folder_path, class: "folder-card d-flex flex-column align-items-center justify-content-center text-center",
+            style: "border:2px dashed #d4d4e6;box-shadow:none;min-height:128px;" do %>
+        <i class="fa-solid fa-plus mb-2" style="font-size:1.2rem;color:#4039d4;"></i>
+        <span style="font-size:.8rem;font-weight:600;color:#6b6b88;">Nouveau classeur</span>
+      <% end %>
+    </div>
+  </div>
+</div>

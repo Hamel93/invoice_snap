@@ -1,1 +1,74 @@
-<h1>Dashboard</h1>
+<% content_for :title, "Tableau de bord" %>
+<%
+  invoices    = @invoices.to_a
+  name        = current_user.email.split("@").first.capitalize
+  total_count = invoices.size
+  ca          = invoices.select { |i| i.status.to_s.downcase.in?(%w[paid payee accepted]) }.sum { |i| i.amount.to_f }
+  clients     = invoices.map(&:company_name).compact_blank.uniq.size
+  overdue     = invoices.count { |i| i.status.to_s.downcase == "overdue" }
+%>
+
+<header class="app-header app-header--rounded app-header--pull">
+  <div class="d-flex justify-content-between align-items-start">
+    <div>
+      <div style="font-size:1.18rem;font-weight:700;">Bonjour, <%= name %> 👋</div>
+      <div class="app-header__sub mt-1"><%= fr_date %></div>
+    </div>
+    <%= link_to initials(name), profile_path, class: "app-header__avatar" %>
+  </div>
+</header>
+
+<div class="app-pad">
+  <div class="card-soft card-overlap">
+    <div class="stat-strip">
+      <div class="stat-strip__col">
+        <div class="stat-strip__num"><%= total_count %></div>
+        <div class="stat-strip__lbl">Factures</div>
+      </div>
+      <div class="stat-strip__col">
+        <div class="stat-strip__num"><%= eur(ca) %></div>
+        <div class="stat-strip__lbl">CA encaissé</div>
+      </div>
+      <div class="stat-strip__col">
+        <div class="stat-strip__num"><%= clients %></div>
+        <div class="stat-strip__lbl">Clients</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title section-gap mb-2">Actions rapides</h2>
+  <div class="quick">
+    <%= link_to camera_invoices_path, class: "quick__btn is-primary" do %>
+      <i class="fa-solid fa-camera"></i>Scanner<% end %>
+    <%= link_to new_invoice_path, class: "quick__btn" do %>
+      <i class="fa-solid fa-arrow-up-from-bracket"></i>Importer<% end %>
+    <%= link_to search_invoices_path, class: "quick__btn" do %>
+      <i class="fa-solid fa-magnifying-glass"></i>Rechercher<% end %>
+    <%= link_to statistics_path, class: "quick__btn" do %>
+      <i class="fa-solid fa-chart-simple"></i>Analytics<% end %>
+  </div>
+
+  <% if overdue.positive? %>
+    <div class="alert-soft section-gap">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <div><strong><%= pluralize(overdue, "facture") %> en retard</strong> — pensez à envoyer vos relances.</div>
+    </div>
+  <% end %>
+
+  <div class="d-flex justify-content-between align-items-center section-gap mb-2">
+    <h2 class="section-title">Factures récentes</h2>
+    <%= link_to "Voir tout", invoices_path, class: "link-more" %>
+  </div>
+
+  <% if invoices.any? %>
+    <% invoices.first(5).each do |invoice| %>
+      <%= render "shared/invoice_row", invoice: invoice %>
+    <% end %>
+  <% else %>
+    <div class="empty-state card-soft">
+      <i class="fa-solid fa-file-invoice d-block"></i>
+      Aucune facture pour l'instant.
+      <div class="mt-3"><%= link_to "Scanner ma première facture", camera_invoices_path, class: "btn btn-grad" %></div>
+    </div>
+  <% end %>
+</div>

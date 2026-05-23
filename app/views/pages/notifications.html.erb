@@ -1,0 +1,51 @@
+<% content_for :title, "Notifications" %>
+<%
+  items = []
+  @invoices.each do |inv|
+    case inv.status.to_s.downcase
+    when "overdue"
+      items << [:danger, "fa-triangle-exclamation", "Facture en retard",
+                "#{inv.company_name} — #{inv.invoice_number} a dépassé son échéance.", invoice_path(inv)]
+    when "paid"
+      items << [:ok, "fa-circle-check", "Paiement reçu",
+                "#{inv.company_name} a réglé #{eur(inv.amount)}.", invoice_path(inv)]
+    end
+  end
+  @reminders.select { |r| r.reminder_date && !r.sent && r.reminder_date >= Date.today }.first(3).each do |r|
+    items << [:warn, "fa-bell", "Rappel d'échéance",
+              "#{r.invoice.company_name} — échéance le #{short_date(r.reminder_date)}.", invoice_path(r.invoice)]
+  end
+  items = items.first(8)
+  tint = { danger: ["#fee2e2", "#dc2626"], ok: ["#dcfce7", "#16a34a"],
+           warn: ["#fef3c7", "#d97706"], primary: ["#eceafe", "#4039d4"] }
+%>
+
+<header class="app-header app-header--rounded">
+  <div class="app-header__bar">
+    <h1 class="app-header__title">Notifications</h1>
+    <div class="app-header__spacer"></div>
+    <a href="#" style="color:#c9c5fa;font-size:.78rem;font-weight:600;">Tout marquer lu</a>
+  </div>
+  <p class="app-header__sub"><%= pluralize(items.size, "notification") %></p>
+</header>
+
+<div class="app-pad" style="margin-top:18px;">
+  <% if items.any? %>
+    <h2 class="section-title mb-2 faint" style="font-size:.7rem;letter-spacing:2px;">RÉCENT</h2>
+    <% items.each do |kind, icon, title, body, url| %>
+      <% c = tint[kind] %>
+      <%= link_to url, class: "list-row" do %>
+        <div class="avatar-initial" style="background:<%= c[0] %>;color:<%= c[1] %>;"><i class="fa-solid <%= icon %>"></i></div>
+        <div class="list-row__body">
+          <div class="list-row__title"><%= title %></div>
+          <div class="list-row__sub text-truncate"><%= body %></div>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class="empty-state card-soft">
+      <i class="fa-regular fa-bell d-block"></i>
+      Aucune notification pour le moment.
+    </div>
+  <% end %>
+</div>

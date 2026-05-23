@@ -1,28 +1,53 @@
-// This is where you override default Bootstrap variables
-// 1. Find all Bootstrap variables that you can override at the end of each component's documentation under the `Sass variables` anchor
-// e.g. here are the ones you can override for the navbar https://getbootstrap.com/docs/5.3/components/navbar/#sass-variables
-// 2. These variables are defined with default value (see https://robots.thoughtbot.com/sass-default)
-// 3. You can override them below!
+// Override Bootstrap defaults to match the Invoice Snap design system.
 
-// General style
+// Typography
 $font-family-sans-serif: $body-font;
 $headings-font-family:   $headers-font;
-$body-bg:                $light-gray;
 $font-size-base:         1rem;
+$headings-font-weight:   700;
+$body-bg:                $is-bg;
+$body-color:             $is-ink;
 
-// Colors
-$body-color: $gray;
-$primary:    $blue;
-$success:    $green;
-$info:       $yellow;
-$danger:     $red;
-$warning:    $orange;
+// Theme colors
+$primary:    $is-primary;
+$secondary:  $is-ink-2;
+$success:    $is-ok;
+$info:       $is-primary-lt;
+$danger:     $is-danger;
+$warning:    $is-warn;
+$light:      $is-white;
+$dark:       $is-navy;
 
-// Buttons & inputs' radius
-$border-radius-sm:            .0625rem;
-$border-radius:               .125rem;
-$border-radius-lg:            .25rem;
-$border-radius-xl:            .5rem;
-$border-radius-xxl:           1rem;
+// Links
+$link-color:            $is-primary;
+$link-decoration:       none;
+$link-hover-color:      $is-primary-dk;
 
-// Override other variables below!
+// Rounded corners (soft, like the mockups)
+$border-radius-sm:   .5rem;
+$border-radius:      .75rem;
+$border-radius-lg:   1rem;
+$border-radius-xl:   1.25rem;
+$border-radius-xxl:  1.5rem;
+$border-radius-pill: 50rem;
+
+// Components
+$border-color:          $is-line;
+$card-border-width:     0;
+$card-border-radius:    1rem;
+$card-bg:               $is-white;
+
+// Buttons & inputs
+$btn-font-weight:        600;
+$btn-border-radius:      .875rem;
+$btn-border-radius-lg:   1rem;
+$btn-padding-y:          .75rem;
+$input-border-color:     $is-line;
+$input-border-radius:    .875rem;
+$input-focus-border-color: $is-primary-lt;
+$input-focus-box-shadow:  0 0 0 .2rem rgba(64, 57, 212, .15);
+$input-btn-focus-box-shadow: 0 0 0 .2rem rgba(64, 57, 212, .15);
+
+// Badges
+$badge-font-weight:   600;
+$badge-border-radius: 50rem;

@@ -1,25 +1,55 @@
-<h2>Sign up</h2>
+<% content_for :title, "Créer un compte" %>
 
-<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= f.error_notification %>
+<section class="auth-hero" style="padding-bottom:42px;">
+  <%= link_to root_path, class: "app-header__back d-inline-flex mb-4" do %><i class="fa-solid fa-chevron-left"></i><% end %>
+  <h1 style="font-size:1.8rem;font-weight:800;">Créer votre compte</h1>
+  <p class="mb-0" style="color:#c9c5fa;">Commencez gratuitement en moins d'une minute.</p>
+</section>
 
-  <div class="form-inputs">
-    <%= f.input :email,
-                required: true,
-                autofocus: true,
-                input_html: { autocomplete: "email" }%>
-    <%= f.input :password,
-                required: true,
-                hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),
-                input_html: { autocomplete: "new-password" } %>
-    <%= f.input :password_confirmation,
-                required: true,
-                input_html: { autocomplete: "new-password" } %>
+<section class="app-pad" style="margin-top:-26px;position:relative;z-index:2;">
+  <div class="card-soft">
+    <a href="#" class="btn-social mb-2"><i class="fa-brands fa-google" style="color:#4285F4;"></i> Continuer avec Google</a>
+    <a href="#" class="btn-social is-dark"><i class="fa-brands fa-apple"></i> Continuer avec Apple</a>
+
+    <div class="divider-or">ou</div>
+
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <% if resource.errors.any? %>
+        <div class="alert alert-danger py-2" style="font-size:.82rem;">
+          <%= resource.errors.full_messages.first %>
+        </div>
+      <% end %>
+
+      <div class="mb-3">
+        <%= f.label :email, "Adresse e-mail", class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email",
+              placeholder: "vous@email.fr", class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :password, "Mot de passe", class: "form-label" %>
+        <%= f.password_field :password, autocomplete: "new-password",
+              placeholder: "8 caractères minimum", class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :password_confirmation, "Confirmer le mot de passe", class: "form-label" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password",
+              placeholder: "••••••••", class: "form-control" %>
+      </div>
+
+      <label class="form-label">Type de compte</label>
+      <div class="chip-row mb-4">
+        <span class="chip is-active">Freelance</span>
+        <span class="chip">Entreprise</span>
+        <span class="chip">Auto-entrepreneur</span>
+      </div>
+
+      <%= f.submit "Créer mon compte  →", class: "btn btn-grad btn-lg w-100" %>
+    <% end %>
   </div>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Sign up" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+  <p class="text-center muted mt-4 mb-4" style="font-size:.86rem;">
+    Déjà un compte ? <%= link_to "Se connecter", new_user_session_path, class: "fw-semibold" %>
+  </p>
+</section>

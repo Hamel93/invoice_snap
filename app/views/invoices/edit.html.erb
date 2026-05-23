@@ -1,2 +1,7 @@
-<h1>Invoices#edit</h1>
-<p>Find me in app/views/invoices/edit.html.erb</p>
+<% content_for :title, "Modifier la facture" %>
+
+<%= render "shared/screen_header", title: "Modifier la facture", back: invoice_path(@invoice) %>
+
+<div class="app-pad" style="margin-top:18px;">
+  <%= render "form", invoice: @invoice, folders: @folders %>
+</div>

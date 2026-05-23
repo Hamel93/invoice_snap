@@ -12,6 +12,7 @@ class RemindersController < ApplicationController
 
   def new
     @reminder = Reminder.new
+    @invoices = current_user.invoices.order(created_at: :desc)
   end
 
   def create
@@ -25,6 +26,7 @@ class RemindersController < ApplicationController
   end
 
   def edit
+    @invoices = current_user.invoices.order(created_at: :desc)
   end
 
   def update

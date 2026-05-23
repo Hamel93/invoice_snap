@@ -1,0 +1,80 @@
+<% content_for :title, "Statistiques" %>
+<%
+  invoices = @invoices.to_a
+  paid     = invoices.select { |i| i.status.to_s.downcase == "paid" }
+  pending  = invoices.select { |i| i.status.to_s.downcase == "pending" }
+  overdue  = invoices.select { |i| i.status.to_s.downcase == "overdue" }
+  ca          = paid.sum { |i| i.amount.to_f }
+  pending_amt = pending.sum { |i| i.amount.to_f }
+  total       = invoices.size
+  recouvrement = total.positive? ? (paid.size * 100 / total) : 0
+  c_total = [paid.size + pending.size + overdue.size, 1].max
+  p1 = (paid.size * 100.0 / c_total).round
+  p2 = (pending.size * 100.0 / c_total).round
+  p3 = [100 - p1 - p2, 0].max
+  months  = (0..5).map { |n| Date.today.beginning_of_month - n.months }.reverse
+  monthly = months.map { |m| [ApplicationHelper::FR_MONTHS_SHORT[m.month],
+              paid.select { |i| i.created_at.to_date >= m && i.created_at.to_date <= m.end_of_month }.sum { |i| i.amount.to_f }] }
+  maxv = [monthly.map { |_, v| v }.max.to_f, 1].max
+  by_client = invoices.group_by { |i| i.company_name.presence || "—" }
+                      .map { |name, invs| [name, invs.sum { |i| i.amount.to_f }] }
+                      .sort_by { |_, v| -v }.first(4)
+  maxc = [by_client.map { |_, v| v }.max.to_f, 1].max
+%>
+
+<%= render "shared/screen_header", title: "Statistiques", subtitle: "Vue d'ensemble de votre activité" %>
+
+<div class="app-pad" style="margin-top:18px;">
+  <div class="segmented mb-3">
+    <span class="segmented__item">7 J</span>
+    <span class="segmented__item is-active">1 M</span>
+    <span class="segmented__item">3 M</span>
+    <span class="segmented__item">1 an</span>
+  </div>
+
+  <div class="row g-2">
+    <div class="col-6"><div class="kpi"><div class="kpi__icon" style="background:#dcfce7;color:#16a34a;font-weight:700;">€</div><div class="kpi__num mt-2"><%= eur(ca) %></div><div class="kpi__lbl">CA encaissé</div></div></div>
+    <div class="col-6"><div class="kpi"><div class="kpi__icon" style="background:#fef3c7;color:#d97706;"><i class="fa-regular fa-clock"></i></div><div class="kpi__num mt-2"><%= eur(pending_amt) %></div><div class="kpi__lbl">En attente</div></div></div>
+    <div class="col-6"><div class="kpi"><div class="kpi__icon" style="background:#eceafe;color:#4039d4;"><i class="fa-solid fa-file-invoice"></i></div><div class="kpi__num mt-2"><%= paid.size %></div><div class="kpi__lbl">Factures payées</div></div></div>
+    <div class="col-6"><div class="kpi"><div class="kpi__icon" style="background:#eceafe;color:#4039d4;"><i class="fa-solid fa-arrow-trend-up"></i></div><div class="kpi__num mt-2"><%= recouvrement %> %</div><div class="kpi__lbl">Recouvrement</div></div></div>
+  </div>
+
+  <div class="card-soft section-gap">
+    <h2 class="section-title mb-3">Revenus par mois</h2>
+    <div class="bars">
+      <% monthly.each do |label, val| %>
+        <div class="bars__bar <%= 'is-hi' if val == maxv && maxv > 1 %>" style="height:<%= [(val / maxv * 150).round, 6].max %>px;"></div>
+      <% end %>
+    </div>
+    <div class="d-flex mt-2"><% monthly.each do |label, _| %><div class="bars__lbl" style="flex:1;"><%= label %></div><% end %></div>
+  </div>
+
+  <div class="card-soft section-gap">
+    <h2 class="section-title mb-3">Répartition par statut</h2>
+    <div class="d-flex align-items-center gap-4">
+      <div class="donut" style="background:conic-gradient(#16a34a 0 <%= p1 %>%, #d97706 <%= p1 %>% <%= p1 + p2 %>%, #dc2626 <%= p1 + p2 %>% 100%);">
+        <div class="donut__center"><div class="fw-bold" style="font-size:1.3rem;"><%= total %></div><div class="faint" style="font-size:.64rem;">factures</div></div>
+      </div>
+      <div class="flex-fill">
+        <div class="d-flex align-items-center justify-content-between mb-2"><span style="font-size:.85rem;"><span class="legend-dot me-2" style="background:#16a34a;"></span>Payées</span><span class="fw-semibold"><%= p1 %> %</span></div>
+        <div class="d-flex align-items-center justify-content-between mb-2"><span style="font-size:.85rem;"><span class="legend-dot me-2" style="background:#d97706;"></span>En attente</span><span class="fw-semibold"><%= p2 %> %</span></div>
+        <div class="d-flex align-items-center justify-content-between"><span style="font-size:.85rem;"><span class="legend-dot me-2" style="background:#dc2626;"></span>En retard</span><span class="fw-semibold"><%= p3 %> %</span></div>
+      </div>
+    </div>
+  </div>
+
+  <% if by_client.any? %>
+    <div class="card-soft section-gap">
+      <h2 class="section-title mb-3">Meilleurs clients</h2>
+      <% by_client.each do |name, val| %>
+        <div class="mb-3">
+          <div class="d-flex justify-content-between mb-1">
+            <span class="text-truncate" style="font-size:.84rem;font-weight:600;"><%= name %></span>
+            <span class="fw-bold" style="font-size:.84rem;"><%= eur(val) %></span>
+          </div>
+          <div class="meter"><div class="meter__fill" style="width:<%= (val / maxc * 100).round %>%;"></div></div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

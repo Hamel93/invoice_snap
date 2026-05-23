@@ -1,0 +1,21 @@
+<%
+  nav = if controller_name == "pages" && action_name == "dashboard" then :home
+        elsif controller_name == "invoices" && %w[camera scan new create].include?(action_name) then :scan
+        elsif controller_name == "folders" then :folder
+        elsif controller_name == "pages" && action_name == "profile" then :profile
+        end
+%>
+<nav class="bottom-nav">
+  <%= link_to dashboard_path, class: "bottom-nav__item #{'is-active' if nav == :home}" do %>
+    <i class="fa-solid fa-house"></i><span>Accueil</span>
+  <% end %>
+  <%= link_to camera_invoices_path, class: "bottom-nav__item #{'is-active' if nav == :scan}" do %>
+    <i class="fa-solid fa-camera"></i><span>Scanner</span>
+  <% end %>
+  <%= link_to folders_path, class: "bottom-nav__item #{'is-active' if nav == :folder}" do %>
+    <i class="fa-solid fa-folder"></i><span>Classeur</span>
+  <% end %>
+  <%= link_to profile_path, class: "bottom-nav__item #{'is-active' if nav == :profile}" do %>
+    <i class="fa-solid fa-user"></i><span>Profil</span>
+  <% end %>
+</nav>

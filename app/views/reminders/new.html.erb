@@ -1,2 +1,7 @@
-<h1>Reminders#new</h1>
-<p>Find me in app/views/reminders/new.html.erb</p>
+<% content_for :title, "Nouveau rappel" %>
+
+<%= render "shared/screen_header", title: "Nouveau rappel", back: reminders_path %>
+
+<div class="app-pad" style="margin-top:18px;">
+  <%= render "form", reminder: @reminder, invoices: @invoices %>
+</div>
