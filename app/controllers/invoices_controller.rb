@@ -10,35 +10,35 @@ class InvoicesController < ApplicationController
   end
 
   def new
-    @invoice = Invoice.new
-    @folders = current_user.folders.distinct
+    @invoice = current_user.invoices.new
+    @folders = current_user.folders.order(:name)
   end
 
   def create
     @invoice = current_user.invoices.new(invoice_params)
 
     if @invoice.save
-      if params[:invoice][:folder_ids].present?
-        params[:invoice][:folder_ids].reject(&:blank?).each do |folder_id|
-          FolderInvoice.create(user: current_user, invoice: @invoice, folder_id: folder_id)
-        end
-      end
-      redirect_to invoice_path(@invoice), notice: "Facture enregistrée."
+      update_invoice_folders
+
+      InvoiceOcrService.new(@invoice).call if @invoice.document.attached?
+
+      redirect_to invoice_path(@invoice), notice: "Facture créée avec succès."
     else
-      @folders = current_user.folders.distinct
+      @folders = current_user.folders.order(:name)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @folders = current_user.folders.distinct
+    @folders = current_user.folders.order(:name)
   end
 
   def update
     if @invoice.update(invoice_params)
-      redirect_to invoice_path(@invoice), notice: "Facture mise à jour."
+      update_invoice_folders
+      redirect_to invoice_path(@invoice), notice: "Facture mise à jour avec succès."
     else
-      @folders = current_user.folders.distinct
+      @folders = current_user.folders.order(:name)
       render :edit, status: :unprocessable_entity
     end
   end
@@ -57,13 +57,24 @@ class InvoicesController < ApplicationController
       else
         scope
       end
+    redirect_to invoices_path, notice: "Facture supprimée avec succès."
+  end
+
+  def search
+    @query = params[:query].to_s.strip
+
+    @invoices = current_user.invoices
+                            .where("company_name ILIKE ? OR invoice_number ILIKE ? OR category ILIKE ?", "%#{@query}%", "%#{@query}%", "%#{@query}%")
+                            .order(created_at: :desc)
+
+    render :index
   end
 
   def camera
   end
 
   def scan
-    redirect_to new_invoice_path
+    redirect_to new_invoice_path, notice: "OCR à venir. Pour le MVP, entre les informations manuellement."
   end
 
   private
@@ -83,5 +94,14 @@ class InvoicesController < ApplicationController
       :ocr_extracted_text,
       :document
     )
+  end
+
+  def update_invoice_folders
+    return unless params[:invoice][:folder_ids]
+
+    folder_ids = params[:invoice][:folder_ids].reject(&:blank?)
+    folders = current_user.folders.where(id: folder_ids)
+
+    @invoice.folders = folders
   end
 end

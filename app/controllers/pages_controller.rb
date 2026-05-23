@@ -17,15 +17,18 @@ class PagesController < ApplicationController
     @invoices = current_user.invoices
     @folders  = current_user.folders.distinct
   end
+    @invoices = current_user.invoices.order(created_at: :desc)
+    @folders = current_user.folders.order(:name)
+
+    @total_invoices = @invoices.count
+    @total_due = @invoices.where.not(status: "paid").sum(:amount)
+    @overdue_invoices = @invoices.where("due_date < ? AND status != ?", Date.current, "paid")
+    @upcoming_invoices = @invoices.where(due_date: Date.current..7.days.from_now.to_date)
 
   def notifications
     @invoices  = current_user.invoices.order(created_at: :desc)
     @reminders = Reminder.joins(:invoice)
                          .where(invoices: { user_id: current_user.id })
-                         .order(:reminder_date)
-  end
-
-  def statistics
-    @invoices = current_user.invoices
+                         .order(reminder_date: :asc)
   end
 end
