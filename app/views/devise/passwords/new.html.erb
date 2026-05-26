@@ -1,7 +1,9 @@
 <% content_for :title, "Mot de passe oublié" %>
 
 <section class="auth-hero" style="padding-bottom:42px;">
-  <%= link_to new_user_session_path, class: "app-header__back d-inline-flex mb-4" do %><i class="fa-solid fa-chevron-left"></i><% end %>
+  <%= link_to new_user_session_path, class: "app-header__back d-inline-flex mb-4" do %>
+    <i class="fa-solid fa-chevron-left"></i>
+  <% end %>
   <h1 style="font-size:1.7rem;font-weight:800;">Mot de passe oublié ?</h1>
   <p class="mb-0" style="color:#c9c5fa;">On vous envoie un lien de réinitialisation.</p>
 </section>
