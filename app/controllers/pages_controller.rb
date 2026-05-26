@@ -1,21 +1,11 @@
 class PagesController < ApplicationController
-  before_action :authenticate_user!, only: [:dashboard]
+  before_action :authenticate_user!, only: [:dashboard, :profile]
   skip_before_action :authenticate_user!, only: [:home]
 
   def home
   end
 
   def dashboard
- fixmaster
-    @invoices  = current_user.invoices.order(created_at: :desc)
-    @folders   = current_user.folders.distinct
-    @reminders = Reminder.joins(:invoice)
-                         .where(invoices: { user_id: current_user.id })
-                         .order(:reminder_date)
-  end
-  
-  def profile
- master
     @invoices = current_user.invoices.order(created_at: :desc)
     @folders = current_user.folders.order(:name)
 
@@ -23,10 +13,12 @@ class PagesController < ApplicationController
     @total_due = @invoices.where.not(status: "paid").sum(:amount)
     @overdue_invoices = @invoices.where("due_date < ? AND status != ?", Date.current, "paid")
     @upcoming_invoices = @invoices.where(due_date: Date.current..7.days.from_now.to_date)
-  end
 
     @reminders = Reminder.joins(:invoice)
                          .where(invoices: { user_id: current_user.id })
                          .order(reminder_date: :asc)
+  end
+
+  def profile
   end
 end

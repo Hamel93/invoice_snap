@@ -13,7 +13,7 @@
   </p>
 </section>
 
-<section class="app-pad" style="margin-top:-26px;position:relative;z-index:2;">
+<section class="app-pad" style="margin-top:-26px;position:relative;z-index:10;">
   <div class="card-soft">
     <div class="promise mb-3">
       <div class="promise__icon" style="background:#eceafe;color:#4039d4;"><i class="fa-solid fa-bolt"></i></div>
@@ -22,7 +22,9 @@
         <div class="faint" style="font-size:.78rem;">L'OCR extrait montants, dates et clients.</div>
       </div>
     </div>
+
     <div class="divider-soft my-3"></div>
+
     <div class="promise mb-3">
       <div class="promise__icon" style="background:#dcfce7;color:#16a34a;"><i class="fa-solid fa-folder-tree"></i></div>
       <div>
@@ -30,7 +32,9 @@
         <div class="faint" style="font-size:.78rem;">Vos documents triés dans les bons classeurs.</div>
       </div>
     </div>
+
     <div class="divider-soft my-3"></div>
+
     <div class="promise">
       <div class="promise__icon" style="background:#fef3c7;color:#d97706;"><i class="fa-solid fa-bell"></i></div>
       <div>
@@ -40,9 +44,10 @@
     </div>
   </div>
 
-  <div class="d-grid gap-2 mt-4">
+  <div class="d-grid gap-2 mt-4 home-cta">
     <%= link_to "Créer un compte", new_user_registration_path, class: "btn btn-grad btn-lg btn-block" %>
     <%= link_to "J'ai déjà un compte", new_user_session_path, class: "btn btn-ghost btn-block" %>
   </div>
+
   <p class="text-center faint mt-3 mb-4" style="font-size:.72rem;">Sans carte bancaire · 14 jours d'essai</p>
 </section>

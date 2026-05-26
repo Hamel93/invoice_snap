@@ -32,3 +32,15 @@ body {
 .btn {
   border-radius: 8px;
 }
+
+/* Fix clickable home CTA buttons */
+.home-cta {
+  position: relative;
+  z-index: 99999;
+  pointer-events: auto;
+}
+
+.home-cta a {
+  display: block;
+  pointer-events: auto;
+}

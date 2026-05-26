@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
   devise_for :users
 
+  get "/login", to: redirect("/users/sign_in")
+  get "/sign_in", to: redirect("/users/sign_in")
+  get "/signup", to: redirect("/users/sign_up")
+  get "/sign_up", to: redirect("/users/sign_up")
+
   root to: "pages#home"
 
   get "/dashboard",     to: "pages#dashboard"
