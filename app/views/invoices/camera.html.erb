@@ -2,41 +2,42 @@
 
 <%= render "shared/screen_header",
       title: "Scanner une facture",
-      subtitle: "Prenez une photo ou importez un document",
+      subtitle: "Caméra ou import de fichier",
       back: dashboard_path %>
 
 <div class="app-pad" style="margin-top:18px;">
   <div class="card-soft text-center">
-    <div class="folder-card__icon mx-auto mb-3" style="background:#eceafe;color:#4039d4;">
-      <i class="fa-solid fa-camera"></i>
-    </div>
+    <video id="camera-preview"
+           autoplay
+           playsinline
+           muted
+           style="width:100%;border-radius:18px;background:#000;min-height:280px;"></video>
 
-    <h2 class="section-title mb-2">Ajouter un document</h2>
+    <canvas id="camera-canvas" class="d-none"></canvas>
 
-    <p class="faint mb-4" style="font-size:.86rem;">
-      La caméra native de votre téléphone s’ouvrira si vous choisissez “Prendre une photo”.
-    </p>
+    <p id="camera-error" class="text-danger mt-3 d-none" style="font-size:.85rem;"></p>
 
     <%= form_with model: current_user.invoices.new,
                   url: invoices_path,
                   method: :post,
                   multipart: true,
                   data: { turbo: false },
-                  class: "d-grid gap-3" do |f| %>
+                  id: "ocr-upload-form",
+                  class: "d-grid gap-3 mt-4" do |f| %>
 
       <%= f.hidden_field :company_name, value: "Document OCR" %>
       <%= f.hidden_field :status, value: "pending" %>
       <%= f.hidden_field :category, value: "OCR" %>
 
-      <label class="btn btn-grad btn-lg w-100 mb-0">
+      <%= f.file_field :document,
+            id: "captured-document",
+            accept: "image/*,.pdf",
+            class: "d-none" %>
+
+      <button type="button" id="capture-btn" class="btn btn-grad btn-lg w-100">
         <i class="fa-solid fa-camera me-2"></i>
-        Prendre une photo
-        <%= f.file_field :document,
-              accept: "image/*",
-              capture: "environment",
-              class: "d-none",
-              onchange: "this.form.submit();" %>
-      </label>
+        Capturer et analyser
+      </button>
 
       <label class="btn btn-ghost w-100 mb-0">
         <i class="fa-solid fa-file-arrow-up me-2"></i>
@@ -48,12 +49,46 @@
       </label>
     <% end %>
   </div>
-
-  <div class="card-soft mt-3">
-    <h3 class="section-title mb-2">Important</h3>
-    <p class="faint mb-0" style="font-size:.82rem;">
-      Sur ordinateur, le bouton photo ouvre souvent le sélecteur de fichiers.
-      Sur téléphone, il peut ouvrir directement la caméra.
-    </p>
-  </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const video = document.getElementById("camera-preview");
+    const canvas = document.getElementById("camera-canvas");
+    const captureBtn = document.getElementById("capture-btn");
+    const fileInput = document.getElementById("captured-document");
+    const form = document.getElementById("ocr-upload-form");
+    const errorBox = document.getElementById("camera-error");
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+        audio: false
+      });
+
+      video.srcObject = stream;
+    } catch (error) {
+      errorBox.classList.remove("d-none");
+      errorBox.innerText = "Impossible d'ouvrir la caméra. Utilise Choisir un fichier.";
+      captureBtn.disabled = true;
+    }
+
+    captureBtn.addEventListener("click", () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      const context = canvas.getContext("2d");
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob((blob) => {
+        const file = new File([blob], "invoice-photo.jpg", { type: "image/jpeg" });
+        const dataTransfer = new DataTransfer();
+
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+
+        form.submit();
+      }, "image/jpeg", 0.92);
+    });
+  });
+</script>
