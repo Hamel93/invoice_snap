@@ -19,73 +19,16 @@
 <div class="app-pad" style="margin-top:18px;">
   <div class="d-grid gap-2 mb-1">
     <% unless @invoice.status.to_s.downcase == "paid" %>
-      <%= button_to invoice_path(@invoice), method: :patch, params: { invoice: { status: "paid" } }, class: "btn btn-grad" do %>
-        <i class="fa-solid fa-circle-check me-2"></i>Marquer comme payée
-      <% end %>
-    <% end %>
-    <div class="d-flex gap-2">
-      <% if @invoice.document.attached? %>
-        <%= link_to rails_blob_path(@invoice.document, disposition: "attachment"), class: "btn btn-ghost flex-fill" do %>
-          <i class="fa-solid fa-download me-2"></i>PDF
-        <% end %>
-      <% end %>
-      <%= link_to edit_invoice_path(@invoice), class: "btn btn-ghost flex-fill" do %>
-        <i class="fa-solid fa-pen me-2"></i>Modifier
-      <% end %>
-    </div>
-  </div>
-
-  <div class="card-soft section-gap">
-    <h2 class="section-title mb-3">Informations</h2>
-    <div class="row g-3">
-      <div class="col-6"><div class="kv__lbl">Client</div><div class="kv__val"><%= @invoice.company_name.presence || "—" %></div></div>
-      <div class="col-6"><div class="kv__lbl">N° de facture</div><div class="kv__val"><%= @invoice.invoice_number.presence || "—" %></div></div>
-      <div class="col-6"><div class="kv__lbl">Catégorie</div><div class="kv__val"><%= @invoice.category.presence || "—" %></div></div>
-      <div class="col-6"><div class="kv__lbl">Échéance</div><div class="kv__val"><%= @invoice.due_date ? short_date(@invoice.due_date) : "—" %></div></div>
-    </div>
-  </div>
-
-  <% amount = @invoice.amount.to_f %>
-<% subtotal = (amount / 1.14975).round(2) %>
-<% tps = (subtotal * 0.05).round(2) %>
-<% tvq = (subtotal * 0.09975).round(2) %>
-
-<div class="card-soft section-gap">
-    <h2 class="section-title mb-3">Montants</h2>
-    <div class="d-flex justify-content-between mb-2"><span class="muted">Montant avant taxes</span><span class="fw-semibold"><%= eur(subtotal) %></span></div>
-    <div class="d-flex justify-content-between mb-2"><span class="muted">TPS (5 %)</span><span class="fw-semibold"><%= eur(tps) %></span></div>
-    <div class="d-flex justify-content-between mb-2"><span class="muted">TVQ (9.975 %)</span><span class="fw-semibold"><%= eur(tvq) %></span></div>
-    <div class="divider-soft my-2"></div>
-    <div class="d-flex justify-content-between"><span class="fw-bold">Total</span><span class="fw-bold" style="color:#4039d4;"><%= eur(@invoice.amount) %></span></div>
-  </div>
-
-  <% if @invoice.reminders.any? %>
-    <div class="card-soft section-gap">
-      <h2 class="section-title mb-3">Rappels &amp; échéances</h2>
-      <% @invoice.reminders.order(:reminder_date).each do |reminder| %>
-        <div class="d-flex align-items-center justify-content-between mb-2">
-          <span><i class="fa-regular fa-clock me-2 faint"></i><%= short_date(reminder.reminder_date) %></span>
-          <span class="badge-status <%= reminder.sent ? 'paid' : 'pending' %>"><%= reminder.sent ? "Envoyé" : "Programmé" %></span>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-
-  <% if @invoice.folders.any? %>
-    <div class="mt-3 d-flex flex-wrap gap-2">
-      <% @invoice.folders.each do |folder| %>
-        <span class="chip"><i class="fa-solid fa-folder me-1"></i><%= folder.name %></span>
-      <% end %>
-    </div>
-  <% end %>
-
-  <%= button_to invoice_path(@invoice), method: :delete,
-        class: "btn w-100 mt-3", style: "background:#fee2e2;color:#dc2626;font-weight:600;" do %>
-    <i class="fa-solid fa-trash me-2"></i>Supprimer la facture
-  <% end %>
+      
 </div>
 
 <%= render "shared/delete_invoice_modal", invoice: @invoice %>
+
+
+
+
+
+</div>
 
 
 <div class="section-gap">
@@ -93,39 +36,22 @@
           class="btn w-100 py-3"
           data-bs-toggle="modal"
           data-bs-target="#deleteInvoiceModal"
-          style="
-            border:none;
-            border-radius:20px;
-            background:#fee2e2;
-            color:#dc2626;
-            font-weight:700;
-            font-size:1rem;
-          ">
+          style="border:none;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;font-size:1rem;">
     <i class="fa-solid fa-trash me-2"></i>
     Supprimer la facture
   </button>
 </div>
 
 <div class="modal fade" id="deleteInvoiceModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered px-3">
     <div class="modal-content border-0" style="border-radius:28px;">
       <div class="modal-body p-4 text-center">
-
         <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-             style="
-               width:72px;
-               height:72px;
-               border-radius:24px;
-               background:#fee2e2;
-               color:#dc2626;
-               font-size:1.8rem;
-             ">
+             style="width:72px;height:72px;border-radius:24px;background:#fee2e2;color:#dc2626;font-size:1.8rem;">
           <i class="fa-solid fa-trash"></i>
         </div>
 
-        <h2 class="fw-bold mb-2" style="font-size:1.3rem;">
-          Supprimer cette facture ?
-        </h2>
+        <h2 class="fw-bold mb-2" style="font-size:1.3rem;">Supprimer cette facture ?</h2>
 
         <p class="text-muted mb-4" style="font-size:.92rem;">
           Cette action est irréversible.
@@ -140,13 +66,10 @@
             Oui, supprimer
           <% end %>
 
-          <button type="button"
-                  class="btn btn-light btn-lg rounded-4 py-3"
-                  data-bs-dismiss="modal">
+          <button type="button" class="btn btn-light btn-lg rounded-4 py-3" data-bs-dismiss="modal">
             Annuler
           </button>
         </div>
-
       </div>
     </div>
   </div>
