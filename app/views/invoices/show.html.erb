@@ -96,15 +96,39 @@
       <% end %>
     </div>
   <% end %>
-
   <% if @invoice.ocr_extracted_text.present? %>
     <div class="card-soft section-gap">
-      <h2 class="section-title mb-3">Texte OCR</h2>
-      <p class="faint mb-0" style="white-space:pre-wrap;font-size:.82rem;">
-        <%= @invoice.ocr_extracted_text %>
-      </p>
+      <button class="btn w-100 d-flex align-items-center justify-content-between p-0"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#ocrTextCollapse"
+              aria-expanded="false"
+              aria-controls="ocrTextCollapse"
+              style="border:none;background:transparent;">
+        <span class="section-title mb-0">Texte OCR brut</span>
+        <span class="badge-status">
+          <i class="fa-solid fa-eye me-1"></i>
+          Voir
+        </span>
+      </button>
+
+      <div class="collapse mt-3" id="ocrTextCollapse">
+        <div style="
+          max-height:260px;
+          overflow:auto;
+          background:#f8f7ff;
+          border-radius:18px;
+          padding:16px;
+          border:1px solid #eceafe;
+        ">
+          <p class="faint mb-0" style="white-space:pre-wrap;font-size:.78rem;line-height:1.45;">
+            <%= @invoice.ocr_extracted_text %>
+          </p>
+        </div>
+      </div>
     </div>
   <% end %>
+
 
   <div class="section-gap">
     <button type="button"
