@@ -51,44 +51,71 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const video = document.getElementById("camera-preview");
-    const canvas = document.getElementById("camera-canvas");
-    const captureBtn = document.getElementById("capture-btn");
-    const fileInput = document.getElementById("captured-document");
-    const form = document.getElementById("ocr-upload-form");
-    const errorBox = document.getElementById("camera-error");
 
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const video = document.getElementById("camera-preview");
+  const canvas = document.getElementById("camera-canvas");
+  const captureBtn = document.getElementById("capture-btn");
+  const fileInput = document.getElementById("captured-document");
+  const form = document.getElementById("ocr-upload-form");
+  const errorBox = document.getElementById("camera-error");
+
+  let stream;
+
+  async function startCamera() {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
         audio: false
       });
 
       video.srcObject = stream;
+
+      errorBox.classList.add("d-none");
+      captureBtn.disabled = false;
+
     } catch (error) {
+      console.error(error);
+
       errorBox.classList.remove("d-none");
-      errorBox.innerText = "Impossible d'ouvrir la caméra. Utilise Choisir un fichier.";
+      errorBox.innerText =
+        "Caméra inaccessible. Vérifie les permissions navigateur ou utilise Choisir un fichier.";
+
       captureBtn.disabled = true;
     }
+  }
 
-    captureBtn.addEventListener("click", () => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    errorBox.classList.remove("d-none");
+    errorBox.innerText =
+      "Ton navigateur ne supporte pas la caméra web.";
 
-      const context = canvas.getContext("2d");
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    captureBtn.disabled = true;
+  } else {
+    startCamera();
+  }
 
-      canvas.toBlob((blob) => {
-        const file = new File([blob], "invoice-photo.jpg", { type: "image/jpeg" });
-        const dataTransfer = new DataTransfer();
+  captureBtn.addEventListener("click", () => {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
-        dataTransfer.items.add(file);
-        fileInput.files = dataTransfer.files;
+    const context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0);
 
-        form.submit();
-      }, "image/jpeg", 0.92);
-    });
+    canvas.toBlob((blob) => {
+      const file = new File([blob], "invoice-photo.jpg", {
+        type: "image/jpeg"
+      });
+
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+
+      fileInput.files = dataTransfer.files;
+
+      form.submit();
+    }, "image/jpeg", 0.95);
   });
+});
 </script>
+
