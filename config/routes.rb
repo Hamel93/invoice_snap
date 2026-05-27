@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users
 
+  devise_scope :user do
+    get "/logout", to: "devise/sessions#destroy"
+  end
+
   get "/login", to: redirect("/users/sign_in")
   get "/sign_in", to: redirect("/users/sign_in")
   get "/signup", to: redirect("/users/sign_up")
