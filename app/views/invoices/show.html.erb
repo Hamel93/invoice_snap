@@ -1,45 +1,121 @@
 <% content_for :title, "Facture #{@invoice.invoice_number}" %>
+
 <% amount = @invoice.amount.to_f %>
-<% ht = (amount / 1.2).round(2) %>
+<% subtotal = (amount / 1.14975).round(2) %>
+<% tps = (subtotal * 0.05).round(2) %>
+<% tvq = (subtotal * 0.09975).round(2) %>
 
 <header class="app-header app-header--pull">
   <div class="app-header__bar">
-    <%= link_to invoices_path, class: "app-header__back" do %><i class="fa-solid fa-chevron-left"></i><% end %>
+    <%= link_to invoices_path, class: "app-header__back" do %>
+      <i class="fa-solid fa-chevron-left"></i>
+    <% end %>
+
     <span class="fw-semibold"><%= @invoice.invoice_number.presence || "Facture" %></span>
+
     <div class="app-header__spacer"></div>
-    <%= link_to edit_invoice_path(@invoice), class: "app-header__icon" do %><i class="fa-solid fa-pen"></i><% end %>
+
+    <%= link_to edit_invoice_path(@invoice), class: "app-header__icon" do %>
+      <i class="fa-solid fa-pen"></i>
+    <% end %>
   </div>
+
   <div class="app-header__big"><%= eur(@invoice.amount) %></div>
+
   <div class="mt-2 d-flex align-items-center gap-2">
     <%= status_badge(@invoice.status) %>
-    <% if @invoice.due_date %><span style="color:#c9c5fa;font-size:.8rem;">échéance le <%= short_date(@invoice.due_date) %></span><% end %>
+
+    <% if @invoice.due_date %>
+      <span style="color:#c9c5fa;font-size:.8rem;">
+        échéance le <%= short_date(@invoice.due_date) %>
+      </span>
+    <% end %>
   </div>
 </header>
 
 <div class="app-pad" style="margin-top:18px;">
-  <div class="d-grid gap-2 mb-1">
-    <% unless @invoice.status.to_s.downcase == "paid" %>
-      
-</div>
+  <div class="card-soft">
+    <h2 class="section-title mb-3">Informations</h2>
 
-<%= render "shared/delete_invoice_modal", invoice: @invoice %>
+    <div class="row g-3">
+      <div class="col-6">
+        <div class="muted">Client</div>
+        <div class="fw-bold"><%= @invoice.company_name.presence || "—" %></div>
+      </div>
 
+      <div class="col-6">
+        <div class="muted">N° de facture</div>
+        <div class="fw-bold"><%= @invoice.invoice_number.presence || "—" %></div>
+      </div>
 
+      <div class="col-6">
+        <div class="muted">Catégorie</div>
+        <div class="fw-bold"><%= @invoice.category.presence || "—" %></div>
+      </div>
 
+      <div class="col-6">
+        <div class="muted">Échéance</div>
+        <div class="fw-bold"><%= @invoice.due_date ? short_date(@invoice.due_date) : "—" %></div>
+      </div>
+    </div>
+  </div>
 
+  <div class="card-soft section-gap">
+    <h2 class="section-title mb-3">Montants</h2>
 
-</div>
+    <div class="d-flex justify-content-between mb-2">
+      <span class="muted">Montant avant taxes</span>
+      <span class="fw-semibold"><%= eur(subtotal) %></span>
+    </div>
 
+    <div class="d-flex justify-content-between mb-2">
+      <span class="muted">TPS (5 %)</span>
+      <span class="fw-semibold"><%= eur(tps) %></span>
+    </div>
 
-<div class="section-gap">
-  <button type="button"
-          class="btn w-100 py-3"
-          data-bs-toggle="modal"
-          data-bs-target="#deleteInvoiceModal"
-          style="border:none;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;font-size:1rem;">
-    <i class="fa-solid fa-trash me-2"></i>
-    Supprimer la facture
-  </button>
+    <div class="d-flex justify-content-between mb-2">
+      <span class="muted">TVQ (9.975 %)</span>
+      <span class="fw-semibold"><%= eur(tvq) %></span>
+    </div>
+
+    <div class="divider-soft my-3"></div>
+
+    <div class="d-flex justify-content-between">
+      <span class="fw-bold">Total</span>
+      <span class="fw-bold" style="color:#4039d4;"><%= eur(amount) %></span>
+    </div>
+  </div>
+
+  <% if @invoice.folders.any? %>
+    <div class="d-flex flex-wrap gap-2 section-gap">
+      <% @invoice.folders.each do |folder| %>
+        <span class="badge-status">
+          <i class="fa-solid fa-folder me-1"></i>
+          <%= folder.name %>
+        </span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @invoice.ocr_extracted_text.present? %>
+    <div class="card-soft section-gap">
+      <h2 class="section-title mb-3">Texte OCR</h2>
+      <p class="faint mb-0" style="white-space:pre-wrap;font-size:.82rem;">
+        <%= @invoice.ocr_extracted_text %>
+      </p>
+    </div>
+  <% end %>
+
+  <div class="section-gap">
+    <button type="button"
+            class="btn w-100 py-3"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteInvoiceModal"
+            style="border:none;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;font-size:1rem;">
+      <i class="fa-solid fa-trash me-2"></i>
+      Supprimer la facture
+    </button>
+  </div>
 </div>
 
 <div class="modal fade" id="deleteInvoiceModal" tabindex="-1" aria-hidden="true">
@@ -74,4 +150,3 @@
     </div>
   </div>
 </div>
-
