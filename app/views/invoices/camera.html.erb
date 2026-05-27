@@ -2,120 +2,41 @@
 
 <%= render "shared/screen_header",
       title: "Scanner une facture",
-      subtitle: "Caméra ou import de fichier",
+      subtitle: "Prenez une photo ou importez un document",
       back: dashboard_path %>
 
 <div class="app-pad" style="margin-top:18px;">
   <div class="card-soft text-center">
-    <video id="camera-preview" autoplay playsinline muted
-           style="width:100%;border-radius:18px;background:#000;min-height:280px;"></video>
+    <div class="folder-card__icon mx-auto mb-3" style="background:#eceafe;color:#4039d4;">
+      <i class="fa-solid fa-camera"></i>
+    </div>
 
-    <canvas id="camera-canvas" class="d-none"></canvas>
+    <h2 class="section-title mb-2">Ajouter une facture</h2>
 
-    <p id="camera-error" class="text-danger mt-3 d-none" style="font-size:.85rem;"></p>
+    <p class="faint mb-4" style="font-size:.86rem;">
+      Sur mobile, le bouton ouvre la caméra. Sur ordinateur, il ouvre le choix de fichier.
+    </p>
 
     <%= form_with model: current_user.invoices.new,
                   url: invoices_path,
                   method: :post,
                   multipart: true,
                   data: { turbo: false },
-                  id: "ocr-upload-form",
-                  class: "d-grid gap-3 mt-4" do |f| %>
+                  class: "d-grid gap-3" do |f| %>
 
       <%= f.hidden_field :company_name, value: "Document OCR" %>
       <%= f.hidden_field :status, value: "pending" %>
       <%= f.hidden_field :category, value: "OCR" %>
 
-      <%= f.file_field :document,
-            id: "captured-document",
-            accept: "image/*,.pdf",
-            class: "d-none" %>
-
-      <button type="button" id="open-camera-btn" class="btn btn-ghost w-100">
-        <i class="fa-solid fa-video me-2"></i>
-        Ouvrir la caméra
-      </button>
-
-      <button type="button" id="capture-btn" class="btn btn-grad btn-lg w-100" disabled>
+      <label class="btn btn-grad btn-lg w-100 mb-0">
         <i class="fa-solid fa-camera me-2"></i>
-        Capturer et analyser
-      </button>
-
-      <label class="btn btn-ghost w-100 mb-0">
-        <i class="fa-solid fa-file-arrow-up me-2"></i>
-        Choisir un fichier
+        Prendre ou choisir une photo
         <%= f.file_field :document,
               accept: "image/*,.pdf",
+              capture: "environment",
               class: "d-none",
               onchange: "this.form.submit();" %>
       </label>
     <% end %>
   </div>
 </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const video = document.getElementById("camera-preview");
-  const canvas = document.getElementById("camera-canvas");
-  const openCameraBtn = document.getElementById("open-camera-btn");
-  const captureBtn = document.getElementById("capture-btn");
-  const fileInput = document.getElementById("captured-document");
-  const form = document.getElementById("ocr-upload-form");
-  const errorBox = document.getElementById("camera-error");
-
-  let stream = null;
-
-  openCameraBtn.addEventListener("click", async () => {
-    errorBox.classList.add("d-none");
-    errorBox.innerText = "";
-
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      errorBox.classList.remove("d-none");
-      errorBox.innerText = "Ton navigateur ne supporte pas l'accès caméra.";
-      return;
-    }
-
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false
-      });
-
-      video.srcObject = stream;
-      await video.play();
-
-      captureBtn.disabled = false;
-      openCameraBtn.innerText = "Caméra ouverte";
-    } catch (error) {
-      console.error("Camera error:", error);
-
-      errorBox.classList.remove("d-none");
-      errorBox.innerText = "Caméra bloquée. Autorise la caméra dans ton navigateur ou utilise Choisir un fichier.";
-    }
-  });
-
-  captureBtn.addEventListener("click", () => {
-    if (!video.videoWidth || !video.videoHeight) {
-      errorBox.classList.remove("d-none");
-      errorBox.innerText = "La caméra n'est pas encore prête.";
-      return;
-    }
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    const context = canvas.getContext("2d");
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    canvas.toBlob((blob) => {
-      const file = new File([blob], "invoice-photo.jpg", { type: "image/jpeg" });
-      const dataTransfer = new DataTransfer();
-
-      dataTransfer.items.add(file);
-      fileInput.files = dataTransfer.files;
-
-      form.submit();
-    }, "image/jpeg", 0.95);
-  });
-});
-</script>
