@@ -36,17 +36,34 @@
     </div>
   </div>
 
-  <h2 class="section-title section-gap mb-2">Actions rapides</h2>
   <div class="quick">
-    <%= link_to camera_invoices_path, class: "quick__btn is-primary" do %>
-      <i class="fa-solid fa-camera"></i>Scanner<% end %>
-    <%= link_to new_invoice_path, class: "quick__btn" do %>
-      <i class="fa-solid fa-arrow-up-from-bracket"></i>Importer<% end %>
-    <%= link_to search_invoices_path, class: "quick__btn" do %>
-      <i class="fa-solid fa-magnifying-glass"></i>Rechercher<% end %>
-    <%= link_to statistics_path, class: "quick__btn" do %>
-      <i class="fa-solid fa-chart-simple"></i>Analytics<% end %>
-  </div>
+
+  <%= link_to camera_invoices_path, class: "quick__btn is-primary" do %>
+    <i class="fa-solid fa-camera"></i>
+    Scanner
+  <% end %>
+
+  <%= link_to new_invoice_path, class: "quick__btn" do %>
+    <i class="fa-solid fa-arrow-up-from-bracket"></i>
+    Importer
+  <% end %>
+
+  <%= link_to search_invoices_path, class: "quick__btn" do %>
+    <i class="fa-solid fa-magnifying-glass"></i>
+    Rechercher
+  <% end %>
+
+  <%= link_to statistics_path, class: "quick__btn" do %>
+    <i class="fa-solid fa-chart-simple"></i>
+    Analytics
+  <% end %>
+
+  <%= link_to chats_path, class: "quick__btn quick__btn--ai" do %>
+    <i class="fa-solid fa-robot"></i>
+    AI Assistant
+  <% end %>
+
+</div>
 
   <% if overdue.positive? %>
     <div class="alert-soft section-gap">
