@@ -7,10 +7,7 @@
 
 <div class="app-pad" style="margin-top:18px;">
   <div class="card-soft text-center">
-    <video id="camera-preview"
-           autoplay
-           playsinline
-           muted
+    <video id="camera-preview" autoplay playsinline muted
            style="width:100%;border-radius:18px;background:#000;min-height:280px;"></video>
 
     <canvas id="camera-canvas" class="d-none"></canvas>
@@ -34,7 +31,12 @@
             accept: "image/*,.pdf",
             class: "d-none" %>
 
-      <button type="button" id="capture-btn" class="btn btn-grad btn-lg w-100">
+      <button type="button" id="open-camera-btn" class="btn btn-ghost w-100">
+        <i class="fa-solid fa-video me-2"></i>
+        Ouvrir la caméra
+      </button>
+
+      <button type="button" id="capture-btn" class="btn btn-grad btn-lg w-100" disabled>
         <i class="fa-solid fa-camera me-2"></i>
         Capturer et analyser
       </button>
@@ -51,19 +53,28 @@
   </div>
 </div>
 
-
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   const video = document.getElementById("camera-preview");
   const canvas = document.getElementById("camera-canvas");
+  const openCameraBtn = document.getElementById("open-camera-btn");
   const captureBtn = document.getElementById("capture-btn");
   const fileInput = document.getElementById("captured-document");
   const form = document.getElementById("ocr-upload-form");
   const errorBox = document.getElementById("camera-error");
 
-  let stream;
+  let stream = null;
 
-  async function startCamera() {
+  openCameraBtn.addEventListener("click", async () => {
+    errorBox.classList.add("d-none");
+    errorBox.innerText = "";
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      errorBox.classList.remove("d-none");
+      errorBox.innerText = "Ton navigateur ne supporte pas l'accès caméra.";
+      return;
+    }
+
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -71,46 +82,36 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       video.srcObject = stream;
+      await video.play();
 
-      errorBox.classList.add("d-none");
       captureBtn.disabled = false;
-
+      openCameraBtn.innerText = "Caméra ouverte";
     } catch (error) {
-      console.error(error);
+      console.error("Camera error:", error);
 
       errorBox.classList.remove("d-none");
-      errorBox.innerText =
-        "Caméra inaccessible. Vérifie les permissions navigateur ou utilise Choisir un fichier.";
-
-      captureBtn.disabled = true;
+      errorBox.innerText = "Caméra bloquée. Autorise la caméra dans ton navigateur ou utilise Choisir un fichier.";
     }
-  }
-
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    errorBox.classList.remove("d-none");
-    errorBox.innerText =
-      "Ton navigateur ne supporte pas la caméra web.";
-
-    captureBtn.disabled = true;
-  } else {
-    startCamera();
-  }
+  });
 
   captureBtn.addEventListener("click", () => {
+    if (!video.videoWidth || !video.videoHeight) {
+      errorBox.classList.remove("d-none");
+      errorBox.innerText = "La caméra n'est pas encore prête.";
+      return;
+    }
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
     const context = canvas.getContext("2d");
-    context.drawImage(video, 0, 0);
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     canvas.toBlob((blob) => {
-      const file = new File([blob], "invoice-photo.jpg", {
-        type: "image/jpeg"
-      });
-
+      const file = new File([blob], "invoice-photo.jpg", { type: "image/jpeg" });
       const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
 
+      dataTransfer.items.add(file);
       fileInput.files = dataTransfer.files;
 
       form.submit();
@@ -118,4 +119,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 </script>
-
