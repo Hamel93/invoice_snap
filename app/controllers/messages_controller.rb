@@ -56,5 +56,4 @@ class MessagesController < ApplicationController
       invoices_context
     ].join("\n\n")
   end
-  endclass MessagesController < ApplicationController
 end

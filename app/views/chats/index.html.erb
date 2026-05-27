@@ -1,0 +1,95 @@
+<div class="container py-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+      <h1 class="fw-bold">AI Financial Assistant</h1>
+
+      <p class="text-muted mb-0">
+        Analyze your invoices and get smart financial recommendations.
+      </p>
+    </div>
+
+    <%= button_to chats_path,
+                  method: :post,
+                  class: "btn btn-dark rounded-pill px-4 py-2" do %>
+
+      <i class="fa-solid fa-plus"></i>
+      New Chat
+
+    <% end %>
+
+  </div>
+
+  <% if @chats.any? %>
+
+    <div class="row">
+
+      <% @chats.each do |chat| %>
+
+        <div class="col-md-4 mb-3">
+
+          <%= link_to chat_path(chat),
+                      class: "text-decoration-none" do %>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+
+              <div class="d-flex align-items-center mb-3">
+
+                <div class="assistant-avatar me-2">
+                  🤖
+                </div>
+
+                <h5 class="mb-0 fw-semibold">
+                  <%= chat.title %>
+                </h5>
+
+              </div>
+
+              <p class="text-muted mb-0">
+                <%= pluralize(chat.messages.count, "message") %>
+              </p>
+
+            </div>
+
+          <% end %>
+
+        </div>
+
+      <% end %>
+
+    </div>
+
+  <% else %>
+
+    <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
+
+      <div style="font-size: 4rem;">
+        🤖
+      </div>
+
+      <h3 class="fw-bold mt-3">
+        No conversations yet
+      </h3>
+
+      <p class="text-muted">
+        Start your first AI financial analysis.
+      </p>
+
+      <div class="mt-3">
+
+        <%= button_to chats_path,
+                      method: :post,
+                      class: "btn btn-dark rounded-pill px-4 py-2" do %>
+
+          Start AI Assistant
+
+        <% end %>
+
+      </div>
+
+    </div>
+
+  <% end %>
+
+</div>
