@@ -1,6 +1,5 @@
 class PagesController < ApplicationController
-  before_action :authenticate_user!, only: [:dashboard, :profile]
-  skip_before_action :authenticate_user!, only: [:home]
+  before_action :authenticate_user!, except: [:home]
 
   def home
   end
@@ -20,5 +19,15 @@ class PagesController < ApplicationController
   end
 
   def profile
+  end
+
+  def notifications
+    @invoices = current_user.invoices.order(due_date: :asc)
+    @reminders = Reminder.joins(:invoice)
+                         .where(invoices: { user_id: current_user.id })
+                         .order(reminder_date: :asc)
+  end
+
+  def statistics
   end
 end
