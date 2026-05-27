@@ -1,5 +1,5 @@
 <%# locals: invoice:, folders: %>
-<%= form_with model: invoice, class: "card-soft" do |f| %>
+<%= form_with model: invoice, class: "card-soft", multipart: true do |f| %>
   <% if invoice.errors.any? %>
     <div class="alert alert-danger py-2" style="font-size:.82rem;"><%= invoice.errors.full_messages.first %></div>
   <% end %>

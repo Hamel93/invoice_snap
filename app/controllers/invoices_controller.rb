@@ -17,13 +17,22 @@ class InvoicesController < ApplicationController
   def create
     @invoice = current_user.invoices.new(invoice_params)
 
+    Rails.logger.info("INVOICE CREATE PARAMS: #{params[:invoice].inspect}")
+
     if @invoice.save
       update_invoice_folders
 
-      InvoiceOcrService.new(@invoice).call if @invoice.document.attached?
+      if @invoice.document.attached?
+        Rails.logger.info("OCR START invoice_id=#{@invoice.id}")
+        InvoiceOcrService.new(@invoice).call
+        Rails.logger.info("OCR END invoice_id=#{@invoice.id}")
+      else
+        Rails.logger.info("OCR SKIPPED no document invoice_id=#{@invoice.id}")
+      end
 
       redirect_to invoice_path(@invoice), notice: "Facture créée avec succès."
     else
+      Rails.logger.error("INVOICE CREATE FAILED: #{@invoice.errors.full_messages.join(', ')}")
       @folders = current_user.folders.order(:name)
       render :new, status: :unprocessable_entity
     end
@@ -49,18 +58,6 @@ class InvoicesController < ApplicationController
   end
 
   def search
-    @query = params[:q].to_s.strip
-    scope  = current_user.invoices.order(created_at: :desc)
-    @invoices =
-      if @query.present?
-        scope.where("company_name ILIKE :q OR invoice_number ILIKE :q OR category ILIKE :q", q: "%#{@query}%")
-      else
-        scope
-      end
-    redirect_to invoices_path, notice: "Facture supprimée avec succès."
-  end
-
-  def search
     @query = params[:query].to_s.strip
 
     @invoices = current_user.invoices
@@ -74,7 +71,7 @@ class InvoicesController < ApplicationController
   end
 
   def scan
-    redirect_to new_invoice_path, notice: "OCR à venir. Pour le MVP, entre les informations manuellement."
+    redirect_to new_invoice_path, notice: "OCR automatique disponible via le formulaire de création avec document."
   end
 
   private
