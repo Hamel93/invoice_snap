@@ -7,4 +7,5 @@ class User < ApplicationRecord
 
   has_many :invoices, dependent: :destroy
   has_many :folders, dependent: :destroy
+  has_many :chats, dependent: :destroy
 end

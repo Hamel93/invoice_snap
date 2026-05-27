@@ -3,10 +3,9 @@ Rails.application.routes.draw do
 
   root to: "pages#home"
 
-  get "/dashboard",     to: "pages#dashboard"
-  get "/profile",       to: "pages#profile"
+  get "/dashboard", to: "pages#dashboard"
   get "/notifications", to: "pages#notifications"
-  get "/statistics",    to: "pages#statistics"
+  get "/profile", to: "pages#profile"
 
   resources :invoices do
     collection do
@@ -18,4 +17,8 @@ Rails.application.routes.draw do
 
   resources :folders
   resources :reminders
+
+  resources :chats, only: [:index, :show, :create] do
+    resources :messages, only: [:create]
+  end
 end
