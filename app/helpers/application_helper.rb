@@ -39,11 +39,11 @@ module ApplicationHelper
     text.to_s.strip[0, 1].to_s.upcase.presence || "?"
   end
 
-  # 2 400 €  /  2 400,50 €
+  # 2 400 $  /  2 400,50 $
   def eur(amount)
     return "—" if amount.nil?
     whole = amount.to_d == amount.to_d.to_i
-    number_to_currency(amount, unit: "€", format: "%n %u", separator: ",",
+    number_to_currency(amount, unit: "$", format: "%n %u", separator: ",",
                        delimiter: " ", precision: whole ? 0 : 2)
   end
 
