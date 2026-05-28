@@ -117,8 +117,17 @@ html, body { background: $is-surround; }
 .kpi__lbl  { font-size:.72rem; color:$is-muted; }
 
 // ---- Quick actions --------------------------------------------------
-.quick { display: flex; gap: 10px; }
+.quick {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 4px 4px 12px;
+  scroll-snap-type: x mandatory;
+}
 .quick__btn {
+  flex: 0 0 96px;
+  scroll-snap-align: start;
+
   flex: 1; background: $is-white; border-radius: 16px; padding: 14px 6px;
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   text-decoration: none; color: $is-ink-2; font-size: .72rem; font-weight: 600;
