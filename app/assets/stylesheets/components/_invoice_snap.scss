@@ -120,13 +120,21 @@ html, body { background: $is-surround; }
 .quick {
   display: flex;
   justify-content: space-between;
+  align-items: stretch;
+  gap: 0;
   margin-top: 12px;
 }
 .quick__btn {
-  width: 78px;
-  height: 118px;
-  border-radius: 24px;
-  flex-shrink: 0;
+  width: 82px;
+  min-width: 82px;
+  max-width: 82px;
+  height: 112px;
+  flex: 0 0 82px;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
   &.is-primary { background: $is-primary; color: $is-white; box-shadow: 0 6px 16px rgba(46,38,184,.4);
     i { color: $is-white; } }
