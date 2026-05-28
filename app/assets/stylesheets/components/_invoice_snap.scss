@@ -45,7 +45,7 @@ html, body { background: $is-surround; }
 .app-header--rounded { border-radius: 0 0 26px 26px; }
 .app-header--pull { padding-bottom: 54px; }      // when a card overlaps it
 
-.app-header__bar { display: flex; align-items: center; gap: 12px; }
+.app-header__bar { display: flex; align-items: center; gap: 24px; }
 .app-header__title { font-size: 1.25rem; font-weight: 700; margin: 0; }
 .app-header__sub   { color: $is-lilac; font-size: .82rem; margin: 4px 0 0; }
 .app-header__back, .app-header__icon {
@@ -74,7 +74,7 @@ html, body { background: $is-surround; }
 }
 .bottom-nav__item {
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 3px; text-decoration: none; color: $is-faint; font-size: .68rem; font-weight: 600;
+  gap: 24px; text-decoration: none; color: $is-faint; font-size: .68rem; font-weight: 600;
   position: relative; padding-top: 8px;
   i { font-size: 1.15rem; }
   &.is-active { color: $is-primary;
@@ -119,17 +119,15 @@ html, body { background: $is-surround; }
 // ---- Quick actions --------------------------------------------------
 .quick {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   overflow-x: auto;
   padding: 4px 4px 12px;
   scroll-snap-type: x mandatory;
 }
 .quick__btn {
-  flex: 0 0 96px;
-  scroll-snap-align: start;
 
   flex: 1; background: $is-white; border-radius: 16px; padding: 14px 6px;
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 24px;
   text-decoration: none; color: $is-ink-2; font-size: .72rem; font-weight: 600;
   box-shadow: 0 2px 8px rgba(10,10,18,.06);
   i { font-size: 1.2rem; color: $is-primary; }
@@ -139,7 +137,7 @@ html, body { background: $is-surround; }
 
 // ---- Alert banner ---------------------------------------------------
 .alert-soft {
-  display:flex; align-items:center; gap:10px;
+  display:flex; align-items:center; gap: 24px;
   background:$is-warn-bg; border:1px solid $is-warn-bd; color:$is-warn-ink;
   border-radius:12px; padding:11px 14px; font-size:.82rem; font-weight:500;
   i { color:$is-warn; }
@@ -147,7 +145,7 @@ html, body { background: $is-surround; }
 
 // ---- List row (invoice / document) ----------------------------------
 .list-row {
-  display:flex; align-items:center; gap:12px;
+  display:flex; align-items:center; gap: 24px;
   background:$is-white; border-radius:14px; padding:12px 14px;
   box-shadow:0 2px 8px rgba(10,10,18,.06); text-decoration:none; color:inherit;
   & + & { margin-top: 10px; }
@@ -175,7 +173,7 @@ html, body { background: $is-surround; }
 .badge-status.neutral  { background:$is-lilac-bg;  color:$is-primary; }
 
 // ---- Chips / filters & segmented control ----------------------------
-.chip-row { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; -ms-overflow-style:none; scrollbar-width:none;
+.chip-row { display:flex; gap: 24px; overflow-x:auto; padding-bottom:2px; -ms-overflow-style:none; scrollbar-width:none;
   &::-webkit-scrollbar { display:none; } }
 .chip {
   flex:0 0 auto; padding:7px 14px; border-radius:50rem; font-size:.78rem; font-weight:600;
@@ -201,7 +199,7 @@ html, body { background: $is-surround; }
 // ---- Calendar -------------------------------------------------------
 .cal { background:$is-white; border-radius:16px; padding:16px; box-shadow:0 2px 8px rgba(10,10,18,.06); }
 .cal__head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-.cal__grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; text-align:center; }
+.cal__grid { display:grid; grid-template-columns:repeat(7,1fr); gap: 24px; text-align:center; }
 .cal__dow  { font-size:.62rem; font-weight:700; color:$is-faint; padding-bottom:6px; }
 .cal__cell { aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:.8rem; color:$is-ink-2; border-radius:10px; position:relative; }
 .cal__cell.is-muted { color:$is-faint; }
@@ -209,7 +207,7 @@ html, body { background: $is-surround; }
 .cal__dot { width:5px; height:5px; border-radius:50%; margin-top:2px; }
 
 // ---- Charts ---------------------------------------------------------
-.bars { display:flex; align-items:flex-end; gap:8px; height:160px; }
+.bars { display:flex; align-items:flex-end; gap: 24px; height:160px; }
 .bars__bar { flex:1; border-radius:6px 6px 0 0; background:$is-lilac; min-height:6px; }
 .bars__bar.is-hi { background:$is-primary; }
 .bars__lbl { font-size:.6rem; color:$is-faint; text-align:center; margin-top:6px; }
@@ -233,7 +231,7 @@ html, body { background: $is-surround; }
 .btn-soft { background:$is-lilac-bg; color:$is-primary; border:0; font-weight:600; border-radius:.875rem; padding:.7rem 1rem;
   &:hover { color:$is-primary-dk; } }
 .btn-ghost { background:$is-white; color:$is-ink-2; border:1px solid $is-line; font-weight:600; border-radius:.875rem; padding:.7rem 1rem; }
-.btn-social { display:flex; align-items:center; justify-content:center; gap:10px; width:100%;
+.btn-social { display:flex; align-items:center; justify-content:center; gap: 24px; width:100%;
   background:$is-white; border:1px solid $is-line; border-radius:.875rem; padding:.75rem; font-weight:600; color:$is-ink-2; text-decoration:none;
   &.is-dark { background:$is-ink; color:$is-white; border-color:$is-ink; } }
 
@@ -261,10 +259,10 @@ html, body { background: $is-surround; }
 }
 .auth-logo { width:48px; height:48px; border-radius:14px; background:$is-primary-lt; color:$is-white;
   display:flex; align-items:center; justify-content:center; font-weight:800; }
-.promise { display:flex; gap:14px; align-items:flex-start; }
+.promise { display:flex; gap: 24px; align-items:flex-start; }
 .promise__icon { width:46px; height:46px; border-radius:14px; flex:0 0 auto; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
 
-.divider-or { display:flex; align-items:center; gap:12px; color:$is-faint; font-size:.78rem; margin:18px 0;
+.divider-or { display:flex; align-items:center; gap: 24px; color:$is-faint; font-size:.78rem; margin:18px 0;
   &::before, &::after { content:""; flex:1; height:1px; background:$is-line; } }
 
 // ---- Scanner (immersive) --------------------------------------------
@@ -274,7 +272,7 @@ html, body { background: $is-surround; }
   display: flex; flex-direction: column; z-index: 40;
 }
 .scanner__top { display: flex; align-items: center; justify-content: space-between; padding: 50px 20px 10px; font-size: .9rem; }
-.scanner__stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 20px; }
+.scanner__stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding: 20px; }
 .scanner__frame { width: 78%; aspect-ratio: 3/4; max-height: 48vh; position: relative; }
 .scanner__frame span { position: absolute; width: 30px; height: 30px; border: 3px solid #8a82ff; }
 .scanner__frame .tl { top: 0; left: 0; border-right: 0; border-bottom: 0; border-radius: 14px 0 0 0; }
