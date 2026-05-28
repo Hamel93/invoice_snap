@@ -44,3 +44,29 @@ body {
   display: block;
   pointer-events: auto;
 }
+
+/* FORCE FIX - Dashboard quick action buttons */
+.quick {
+  display: flex !important;
+  justify-content: space-between !important;
+  gap: 0 !important;
+  width: 100% !important;
+}
+
+.quick__btn {
+  width: 74px !important;
+  min-width: 74px !important;
+  max-width: 74px !important;
+  height: 104px !important;
+  flex: 0 0 74px !important;
+  padding: 10px 6px !important;
+}
+
+.quick__btn i {
+  font-size: 1.25rem !important;
+}
+
+.quick__btn span,
+.quick__btn {
+  font-size: 0.72rem !important;
+}
