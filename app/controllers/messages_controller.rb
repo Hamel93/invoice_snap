@@ -21,7 +21,7 @@ class MessagesController < ApplicationController
       chat: @chat
     )
 
-    ruby_llm_chat = RubyLLM.chat(model: "gpt-4o-mini")
+    ruby_llm_chat = RubyLLM.chat(model: ENV.fetch("AI_MODEL", "openai/gpt-4o-mini"))
 
     response = ruby_llm_chat
                .with_instructions(instructions)
