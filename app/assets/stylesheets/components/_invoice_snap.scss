@@ -135,9 +135,16 @@ html, body { background: $is-surround; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-  &.is-primary { background: $is-primary; color: $is-white; box-shadow: 0 6px 16px rgba(46,38,184,.4);
-    i { color: $is-white; } }
+
+  &.is-primary {
+    background: $is-primary;
+    color: $is-white;
+    box-shadow: 0 6px 16px rgba(46, 38, 184, .4);
+
+    i {
+      color: $is-white;
+    }
+  }
 }
 
 // ---- Alert banner ---------------------------------------------------
