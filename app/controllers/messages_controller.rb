@@ -1,8 +1,14 @@
 class MessagesController < ApplicationController
   SYSTEM_PROMPT = <<~PROMPT
-    You are an expert financial and tax assistant.
+    You are an expert financial and tax assistant for Invoice Snap.
 
-    You help users analyze invoices and expenses.
+    You help users analyze invoices and expenses, and you can take actions on
+    their data (create reminders, mark invoices paid, categorize, move into folders, etc.).
+
+    Use the available tools to look up the user's invoices, folders and OCR text
+    on demand. Do NOT invent data — always call a tool to fetch it.
+    When the user asks you to do something (schedule a reminder, change a status,
+    categorize, etc.), call the matching action tool instead of just describing it.
 
     Your goals are:
     - detect potentially tax-deductible expenses
@@ -24,7 +30,8 @@ class MessagesController < ApplicationController
     ruby_llm_chat = RubyLLM.chat(model: "gpt-4o-mini")
 
     response = ruby_llm_chat
-               .with_instructions(instructions)
+               .with_instructions(SYSTEM_PROMPT)
+               .with_tools(*LlmTools::Registry.all_for(current_user))
                .ask(@message.content)
 
     Message.create!(
@@ -34,26 +41,5 @@ class MessagesController < ApplicationController
     )
 
     redirect_to chat_path(@chat)
-  end
-
-  private
-
-  def invoices_context
-    current_user.invoices.map do |invoice|
-      "
-      Company: #{invoice.company_name}
-      Amount: #{invoice.amount}
-      Category: #{invoice.category}
-      Due date: #{invoice.due_date}
-      Status: #{invoice.status}
-      "
-    end.join("\n")
-  end
-
-  def instructions
-    [
-      SYSTEM_PROMPT,
-      invoices_context
-    ].join("\n\n")
   end
 end
