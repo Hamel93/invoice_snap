@@ -47,3 +47,23 @@
   box-shadow: none;
   border-color: #111111;
 }
+
+.chat-suggestions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.suggestion-btn {
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.suggestion-btn:hover {
+  background: #f7f7f8;
+  transform: translateY(-1px);
+}

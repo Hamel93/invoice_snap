@@ -47,7 +47,7 @@
 
           <div class="d-flex justify-content-start mb-4">
 
-            <div class="assistant-message px-4 py-3 rounded-4">
+            <div class="assistant-message px-4 py-3 rounded-4 message-target">
 
               <div class="d-flex align-items-center mb-2">
                 <div class="assistant-avatar me-2">
@@ -76,6 +76,34 @@
 
     <div class="border-top p-3 bg-white">
 
+          <div class="chat-suggestions mb-3">
+
+            <button type="button"
+                    class="suggestion-btn"
+                    data-suggestion="Analyze my spending">
+              💡 Analyze my spending
+            </button>
+
+            <button type="button"
+                    class="suggestion-btn"
+                    data-suggestion="Which invoices are tax deductible?">
+              💰 Tax deductions
+            </button>
+
+            <button type="button"
+                    class="suggestion-btn"
+                    data-suggestion="What invoices are due soon?">
+              📅 Upcoming invoices
+            </button>
+
+            <button type="button"
+                    class="suggestion-btn"
+                    data-suggestion="Give me budget recommendations">
+              📊 Budget recommendations
+            </button>
+
+          </div>
+
       <%= simple_form_for [@chat, @message] do |f| %>
 
         <div class="d-flex align-items-end gap-2">
@@ -85,7 +113,8 @@
                         label: false,
                         placeholder: "Ask something about your invoices...",
                         input_html: {
-                          class: "form-control rounded-4 p-3 chat-input"
+                          class: "form-control rounded-4 p-3 chat-input",
+                          id: "chat-input"
                         } %>
           </div>
 
