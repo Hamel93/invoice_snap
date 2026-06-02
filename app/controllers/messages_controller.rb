@@ -28,11 +28,17 @@ class MessagesController < ApplicationController
     )
 
     ruby_llm_chat = RubyLLM.chat(model: "gpt-4o-mini")
+                           .with_instructions(SYSTEM_PROMPT)
+                           .with_tools(*LlmTools::Registry.all_for(current_user))
 
-    response = ruby_llm_chat
-               .with_instructions(SYSTEM_PROMPT)
-               .with_tools(*LlmTools::Registry.all_for(current_user))
-               .ask(@message.content)
+    @chat.messages.order(:created_at).each do |message|
+      ruby_llm_chat.add_message(
+        role: message.role.to_sym,
+        content: message.content
+      )
+    end
+
+    response = ruby_llm_chat.ask(@message.content)
 
     Message.create!(
       role: "assistant",
