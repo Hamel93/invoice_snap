@@ -17,4 +17,12 @@ class ChatsController < ApplicationController
 
     redirect_to chat_path(@chat)
   end
+
+  def destroy
+    @chat = current_user.chats.find(params[:id])
+
+    @chat.destroy
+
+    redirect_to chats_path, notice: "Conversation deleted."
+  end
 end

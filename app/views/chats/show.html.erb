@@ -14,15 +14,30 @@
 
   <% @chats.each do |chat| %>
 
-    <%= link_to chat_path(chat),
-            class: "chat-sidebar-item #{'active' if chat == @chat}",
-            title: chat.title do %>
+  <div class="d-flex align-items-center mb-2">
 
-  🤖 <%= chat.title %>
+    <%= link_to chat_path(chat),
+                class: "chat-sidebar-item flex-grow-1 #{'active' if chat == @chat}",
+                title: chat.title do %>
+
+      🤖 <%= chat.title %>
+
+    <% end %>
+
+    <%= link_to chat_path(chat),
+                data: {
+                  turbo_method: :delete,
+                  turbo_confirm: "Delete this conversation?"
+                },
+                class: "text-danger ms-2" do %>
+
+      <i class="fa-solid fa-trash"></i>
+
+    <% end %>
+
+  </div>
 
 <% end %>
-
-  <% end %>
 
 </div>
 

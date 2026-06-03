@@ -27,7 +27,7 @@ Rails.application.routes.draw do
 
   resources :folders
   resources :reminders
-  resources :chats, only: [:index, :show, :create] do
+  resources :chats, only: [:index, :show, :create, :destroy] do
     resources :messages, only: [:create]
   end
 end
