@@ -25,4 +25,16 @@ class ChatsController < ApplicationController
 
     redirect_to chats_path, notice: "Conversation deleted."
   end
+
+  def rename
+    @chat = current_user.chats.find(params[:id])
+
+    if @chat.update(title: params[:chat][:title])
+      redirect_to chat_path(@chat),
+                  notice: "Conversation renamed."
+    else
+      redirect_to chat_path(@chat),
+                  alert: "Unable to rename conversation."
+    end
+  end
 end
