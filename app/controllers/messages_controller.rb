@@ -46,6 +46,12 @@ class MessagesController < ApplicationController
       chat: @chat
     )
 
+    if @chat.title == "New financial assistant"
+      @chat.update(
+        title: @message.content.truncate(30, separator: " ")
+      )
+    end
+
     redirect_to chat_path(@chat)
   end
 end

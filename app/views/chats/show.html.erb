@@ -1,8 +1,32 @@
 <!-- app/views/chats/show.html.erb -->
 
-<div class="container py-4">
+<div class="chat-layout">
 
+  <div class="chat-sidebar">
 
+  <%= button_to chats_path,
+                method: :post,
+                class: "btn btn-dark w-100 mb-3 rounded-pill" do %>
+
+    + New Chat
+
+  <% end %>
+
+  <% @chats.each do |chat| %>
+
+    <%= link_to chat_path(chat),
+            class: "chat-sidebar-item #{'active' if chat == @chat}",
+            title: chat.title do %>
+
+  🤖 <%= chat.title %>
+
+<% end %>
+
+  <% end %>
+
+</div>
+
+<div class="chat-main">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="fw-bold mb-1">AI Financial Assistant</h1>
@@ -104,7 +128,8 @@
 
           </div>
 
-      <%= simple_form_for [@chat, @message] do |f| %>
+      <%= simple_form_for [@chat, @message],
+                            html: { id: "chat-form" } do |f| %>
 
         <div class="d-flex align-items-end gap-2">
 
@@ -121,7 +146,8 @@
           <div>
             <%= f.button :submit,
                          "Send",
-                         class: "btn btn-dark rounded-4 px-4 py-3 fw-semibold" %>
+                         class: "btn btn-dark rounded-4 px-4 py-3 fw-semibold",
+                         id: "send-button" %>
           </div>
 
         </div>
@@ -131,5 +157,5 @@
     </div>
 
   </div>
-
+</div>
 </div>

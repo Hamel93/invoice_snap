@@ -67,3 +67,47 @@
   background: #f7f7f8;
   transform: translateY(-1px);
 }
+
+.chat-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.chat-sidebar {
+  width: 280px;
+  border-right: 1px solid #e5e7eb;
+  padding: 20px;
+  overflow-y: auto;
+  background: #fafafa;
+}
+
+.chat-main {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.chat-sidebar-item {
+  display: block;
+  padding: 12px;
+  margin-bottom: 8px;
+
+  border-radius: 12px;
+
+  text-decoration: none;
+  color: #111;
+
+  transition: 0.2s;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-sidebar-item:hover {
+  background: #f0f0f0;
+}
+
+.chat-sidebar-item.active {
+  background: #111;
+  color: white;
+}
