@@ -329,3 +329,59 @@ html, body { background: $is-surround; }
 .divider-line { height:1px; background:$is-line; }
 .divider-soft { height:1px; background:#f0f0f4; }
 .timeline-line { width:2px; background:$is-line; }
+
+
+/* Dashboard quick actions - compact final override */
+.quick {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 10px !important;
+  margin-top: 14px !important;
+}
+
+.quick__btn {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 92px !important;
+  flex: unset !important;
+  border-radius: 22px !important;
+  padding: 10px 4px !important;
+  background: #fff !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  color: #312e81 !important;
+  font-size: .76rem !important;
+  font-weight: 700 !important;
+  line-height: 1.05 !important;
+}
+
+.quick__btn i {
+  font-size: 1.35rem !important;
+  color: #4338ca !important;
+}
+
+.quick__btn.is-primary {
+  background: #4039d4 !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(64, 57, 212, .35) !important;
+}
+
+.quick__btn.is-primary i {
+  color: #fff !important;
+}
+
+.quick__btn--ai {
+  background: #1f1f1f !important;
+  color: #fff !important;
+}
+
+.quick__btn--ai i {
+  color: #fff !important;
+}
