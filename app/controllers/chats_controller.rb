@@ -7,6 +7,8 @@ class ChatsController < ApplicationController
 
   def show
     @chat = current_user.chats.find(params[:id])
+    @chats = current_user.chats.order(updated_at: :desc)
+
     @message = Message.new
   end
 
@@ -14,5 +16,25 @@ class ChatsController < ApplicationController
     @chat = current_user.chats.create(title: "New financial assistant")
 
     redirect_to chat_path(@chat)
+  end
+
+  def destroy
+    @chat = current_user.chats.find(params[:id])
+
+    @chat.destroy
+
+    redirect_to chats_path, notice: "Conversation deleted."
+  end
+
+  def rename
+    @chat = current_user.chats.find(params[:id])
+
+    if @chat.update(title: params[:chat][:title])
+      redirect_to chat_path(@chat),
+                  notice: "Conversation renamed."
+    else
+      redirect_to chat_path(@chat),
+                  alert: "Unable to rename conversation."
+    end
   end
 end

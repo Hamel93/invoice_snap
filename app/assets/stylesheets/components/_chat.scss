@@ -1,5 +1,4 @@
 .chat-wrapper {
-  height: 85vh;
   display: flex;
   flex-direction: column;
 }
@@ -46,4 +45,77 @@
 .chat-input:focus {
   box-shadow: none;
   border-color: #111111;
+}
+
+.chat-suggestions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.suggestion-btn {
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.suggestion-btn:hover {
+  background: #f7f7f8;
+  transform: translateY(-1px);
+}
+
+.chat-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.chat-sidebar {
+  width: 280px;
+  border-right: 1px solid #e5e7eb;
+  padding: 20px;
+  overflow-y: auto;
+  background: #fafafa;
+}
+
+.chat-main {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.chat-sidebar-item {
+  display: block;
+  padding: 12px;
+  margin-bottom: 8px;
+
+  border-radius: 12px;
+
+  text-decoration: none;
+  color: #111;
+
+  transition: 0.2s;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-sidebar-item:hover {
+  background: #f0f0f0;
+}
+
+.chat-sidebar-item.active {
+  background: #111;
+  color: white;
+}
+
+.chat-sidebar .fa-trash {
+  opacity: 0.6;
+  transition: 0.2s;
+}
+
+.chat-sidebar .fa-trash:hover {
+  opacity: 1;
 }
