@@ -120,47 +120,44 @@ html, body { background: $is-surround; }
 .quick {
   display: flex;
   justify-content: space-between;
-  align-items: stretch;
+  align-items: center;
+  gap: 10px;
   margin-top: 12px;
 }
-.quick__btn {
-  width: 82px;
-  min-width: 82px;
-  max-width: 82px;
-  height: 112px;
-  flex: 0 0 82px;
 
-  border-radius: 22px;
+.quick__btn {
+  width: 72px;
+  min-width: 72px;
+  max-width: 72px;
+  height: 86px;
+  flex: 0 0 72px;
+
+  border-radius: 20px;
   background: white;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 7px;
 
   text-decoration: none;
   color: #312e81;
   font-weight: 700;
-  font-size: .92rem;
-
-  transition: transform .15s ease, box-shadow .15s ease;
+  font-size: .78rem;
+  line-height: 1.1;
+  text-align: center;
 
   i {
-    font-size: 1.6rem;
+    font-size: 1.35rem;
     color: #4338ca;
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
   }
 
   &.is-primary {
     background: $is-primary;
     color: $is-white;
-    box-shadow: 0 6px 16px rgba(46, 38, 184, .4);
+    box-shadow: 0 8px 18px rgba(46, 38, 184, .35);
 
     i {
       color: $is-white;
