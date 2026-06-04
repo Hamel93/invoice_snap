@@ -119,45 +119,45 @@ html, body { background: $is-surround; }
 // ---- Quick actions --------------------------------------------------
 .quick {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin-top: 12px;
 }
 
 .quick__btn {
-  width: 72px;
-  min-width: 72px;
-  max-width: 72px;
-  height: 86px;
-  flex: 0 0 72px;
+  width: 58px;
+  min-width: 58px;
+  max-width: 58px;
+  height: 68px;
+  flex: 0 0 58px;
 
-  border-radius: 20px;
+  border-radius: 16px;
   background: white;
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 5px 14px rgba(15, 23, 42, 0.08);
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 5px;
 
   text-decoration: none;
   color: #312e81;
   font-weight: 700;
-  font-size: .78rem;
-  line-height: 1.1;
+  font-size: .64rem;
+  line-height: 1.05;
   text-align: center;
 
   i {
-    font-size: 1.35rem;
+    font-size: 1.08rem;
     color: #4338ca;
   }
 
   &.is-primary {
     background: $is-primary;
     color: $is-white;
-    box-shadow: 0 8px 18px rgba(46, 38, 184, .35);
+    box-shadow: 0 7px 16px rgba(46, 38, 184, .32);
 
     i {
       color: $is-white;
@@ -331,57 +331,3 @@ html, body { background: $is-surround; }
 .timeline-line { width:2px; background:$is-line; }
 
 
-/* Dashboard quick actions - compact final override */
-.quick {
-  display: grid !important;
-  grid-template-columns: repeat(5, 1fr) !important;
-  gap: 10px !important;
-  margin-top: 14px !important;
-}
-
-.quick__btn {
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: none !important;
-  height: 92px !important;
-  flex: unset !important;
-  border-radius: 22px !important;
-  padding: 10px 4px !important;
-  background: #fff !important;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  text-align: center !important;
-  text-decoration: none !important;
-  color: #312e81 !important;
-  font-size: .76rem !important;
-  font-weight: 700 !important;
-  line-height: 1.05 !important;
-}
-
-.quick__btn i {
-  font-size: 1.35rem !important;
-  color: #4338ca !important;
-}
-
-.quick__btn.is-primary {
-  background: #4039d4 !important;
-  color: #fff !important;
-  box-shadow: 0 8px 20px rgba(64, 57, 212, .35) !important;
-}
-
-.quick__btn.is-primary i {
-  color: #fff !important;
-}
-
-.quick__btn--ai {
-  background: #1f1f1f !important;
-  color: #fff !important;
-}
-
-.quick__btn--ai i {
-  color: #fff !important;
-}
