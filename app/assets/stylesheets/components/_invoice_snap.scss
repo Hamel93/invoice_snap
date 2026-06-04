@@ -126,11 +126,11 @@ html, body { background: $is-surround; }
 }
 
 .quick__btn {
-  width: 58px;
-  min-width: 58px;
-  max-width: 58px;
-  height: 68px;
-  flex: 0 0 58px;
+  width: 72px;
+  min-width: 72px;
+  max-width: 72px;
+  height: 82px;
+  flex: 0 0 72px;
 
   border-radius: 16px;
   background: white;
@@ -145,12 +145,12 @@ html, body { background: $is-surround; }
   text-decoration: none;
   color: #312e81;
   font-weight: 700;
-  font-size: .64rem;
+  font-size: .72rem;
   line-height: 1.05;
   text-align: center;
 
   i {
-    font-size: 1.08rem;
+    font-size: 1.25rem;
     color: #4338ca;
   }
 
