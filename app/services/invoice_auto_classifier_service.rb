@@ -15,6 +15,7 @@ class InvoiceAutoClassifierService
   def call
     assign_year_folder
     assign_category_only
+    assign_status
   end
 
   private
@@ -29,6 +30,29 @@ class InvoiceAutoClassifierService
 
   def assign_category_only
     @invoice.update(category: detect_category)
+  end
+
+
+  def assign_status
+    return if @invoice.status.present? && @invoice.status != "pending"
+
+    if paid_document?
+      @invoice.update(status: "paid")
+    elsif @invoice.due_date.present? && @invoice.due_date < Date.current
+      @invoice.update(status: "overdue")
+    else
+      @invoice.update(status: "pending")
+    end
+  end
+
+  def paid_document?
+    paid_keywords = [
+      "reçu", "receipt", "paid", "payé", "payee", "payment received",
+      "transaction", "débit", "debit", "visa", "mastercard",
+      "interac", "autorisé", "approved", "merci de votre achat"
+    ]
+
+    paid_keywords.any? { |keyword| @text.include?(keyword) }
   end
 
   def extract_year
