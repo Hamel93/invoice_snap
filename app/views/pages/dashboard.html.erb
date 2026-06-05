@@ -3,9 +3,26 @@
   invoices    = @invoices.to_a
   name        = current_user.email.split("@").first.capitalize
   total_count = invoices.size
-  ca          = invoices.select { |i| i.status.to_s.downcase.in?(%w[paid payee accepted]) }.sum { |i| i.amount.to_f }
+  paid        = invoices.select { |i| i.status.to_s.downcase.in?(%w[paid payee accepted]) }
+  pending     = invoices.select { |i| i.status.to_s.downcase == "pending" }
+  overdue_inv = invoices.select { |i| i.status.to_s.downcase == "overdue" }
+  ca          = paid.sum { |i| i.amount.to_f }
+  pending_amt = pending.sum { |i| i.amount.to_f }
   clients     = invoices.map(&:company_name).compact_blank.uniq.size
-  overdue     = invoices.count { |i| i.status.to_s.downcase == "overdue" }
+  overdue     = overdue_inv.size
+  recouvrement = total_count.positive? ? (paid.size * 100 / total_count) : 0
+  c_total = [paid.size + pending.size + overdue_inv.size, 1].max
+  p1 = (paid.size * 100.0 / c_total).round
+  p2 = (pending.size * 100.0 / c_total).round
+  p3 = [100 - p1 - p2, 0].max
+  months  = (0..5).map { |n| Date.today.beginning_of_month - n.months }.reverse
+  monthly = months.map { |m| [ApplicationHelper::FR_MONTHS_SHORT[m.month],
+              paid.select { |i| i.created_at.to_date >= m && i.created_at.to_date <= m.end_of_month }.sum { |i| i.amount.to_f }] }
+  maxv = [monthly.map { |_, v| v }.max.to_f, 1].max
+  by_client = invoices.group_by { |i| i.company_name.presence || "—" }
+                      .map { |cname, invs| [cname, invs.sum { |i| i.amount.to_f }] }
+                      .sort_by { |_, v| -v }.first(4)
+  maxc = [by_client.map { |_, v| v }.max.to_f, 1].max
 %>
 
 <header class="app-header app-header--rounded app-header--pull">
@@ -39,28 +56,23 @@
   <div class="quick">
 
   <%= link_to camera_invoices_path, class: "quick__btn is-primary" do %>
-    <i class="fa-solid fa-camera"></i>
-    Scanner
+    <span class="quick__btn__chip"><i class="fa-solid fa-camera"></i></span>
+    <span class="quick__btn__lbl">Scanner</span>
   <% end %>
 
-  <%= link_to new_invoice_path, class: "quick__btn" do %>
-    <i class="fa-solid fa-arrow-up-from-bracket"></i>
-    Importer
+  <%= link_to new_invoice_path, class: "quick__btn quick__btn--upload" do %>
+    <span class="quick__btn__chip"><i class="fa-solid fa-arrow-up-from-bracket"></i></span>
+    <span class="quick__btn__lbl">Importer</span>
   <% end %>
 
-  <%= link_to search_invoices_path, class: "quick__btn" do %>
-    <i class="fa-solid fa-magnifying-glass"></i>
-    Rechercher
-  <% end %>
-
-  <%= link_to statistics_path, class: "quick__btn" do %>
-    <i class="fa-solid fa-chart-simple"></i>
-    Analytics
+  <%= link_to search_invoices_path, class: "quick__btn quick__btn--search" do %>
+    <span class="quick__btn__chip"><i class="fa-solid fa-magnifying-glass"></i></span>
+    <span class="quick__btn__lbl">Rechercher</span>
   <% end %>
 
   <%= link_to chats_path, class: "quick__btn quick__btn--ai" do %>
-    <i class="fa-solid fa-robot"></i>
-    AI Assistant
+    <span class="quick__btn__chip"><i class="fa-solid fa-robot"></i></span>
+    <span class="quick__btn__lbl">Assistant</span>
   <% end %>
 
 </div>
@@ -87,5 +99,55 @@
       Aucune facture pour l'instant.
       <div class="mt-3"><%= link_to "Scanner ma première facture", camera_invoices_path, class: "btn btn-grad" %></div>
     </div>
+  <% end %>
+
+  <% if invoices.any? %>
+    <h2 class="section-title section-gap mb-3">Vue d'ensemble</h2>
+
+    <div class="row g-2">
+      <div class="col-6"><div class="kpi"><div class="kpi__icon" style="background:#dcfce7;color:#16a34a;font-weight:700;">$</div><div class="kpi__num mt-2"><%= eur(ca) %></div><div class="kpi__lbl">CA encaissé</div></div></div>
+      <div class="col-6"><div class="kpi"><div class="kpi__icon" style="background:#fef3c7;color:#d97706;"><i class="fa-regular fa-clock"></i></div><div class="kpi__num mt-2"><%= eur(pending_amt) %></div><div class="kpi__lbl">En attente</div></div></div>
+      <div class="col-6"><div class="kpi"><div class="kpi__icon" style="background:#eceafe;color:#4039d4;"><i class="fa-solid fa-file-invoice"></i></div><div class="kpi__num mt-2"><%= paid.size %></div><div class="kpi__lbl">Factures payées</div></div></div>
+      <div class="col-6"><div class="kpi"><div class="kpi__icon" style="background:#eceafe;color:#4039d4;"><i class="fa-solid fa-arrow-trend-up"></i></div><div class="kpi__num mt-2"><%= recouvrement %> %</div><div class="kpi__lbl">Recouvrement</div></div></div>
+    </div>
+
+    <div class="card-soft section-gap">
+      <h2 class="section-title mb-3">Revenus par mois</h2>
+      <div class="bars">
+        <% monthly.each do |label, val| %>
+          <div class="bars__bar <%= 'is-hi' if val == maxv && maxv > 1 %>" style="height:<%= [(val / maxv * 150).round, 6].max %>px;"></div>
+        <% end %>
+      </div>
+      <div class="d-flex mt-2"><% monthly.each do |label, _| %><div class="bars__lbl" style="flex:1;"><%= label %></div><% end %></div>
+    </div>
+
+    <div class="card-soft section-gap">
+      <h2 class="section-title mb-3">Répartition par statut</h2>
+      <div class="d-flex align-items-center gap-4">
+        <div class="donut" style="background:conic-gradient(#16a34a 0 <%= p1 %>%, #d97706 <%= p1 %>% <%= p1 + p2 %>%, #dc2626 <%= p1 + p2 %>% 100%);">
+          <div class="donut__center"><div class="fw-bold" style="font-size:1.3rem;"><%= total_count %></div><div class="faint" style="font-size:.64rem;">factures</div></div>
+        </div>
+        <div class="flex-fill">
+          <div class="d-flex align-items-center justify-content-between mb-2"><span style="font-size:.85rem;"><span class="legend-dot me-2" style="background:#16a34a;"></span>Payées</span><span class="fw-semibold"><%= p1 %> %</span></div>
+          <div class="d-flex align-items-center justify-content-between mb-2"><span style="font-size:.85rem;"><span class="legend-dot me-2" style="background:#d97706;"></span>En attente</span><span class="fw-semibold"><%= p2 %> %</span></div>
+          <div class="d-flex align-items-center justify-content-between"><span style="font-size:.85rem;"><span class="legend-dot me-2" style="background:#dc2626;"></span>En retard</span><span class="fw-semibold"><%= p3 %> %</span></div>
+        </div>
+      </div>
+    </div>
+
+    <% if by_client.any? %>
+      <div class="card-soft section-gap">
+        <h2 class="section-title mb-3">Meilleurs clients</h2>
+        <% by_client.each do |cname, val| %>
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-truncate" style="font-size:.84rem;font-weight:600;"><%= cname %></span>
+              <span class="fw-bold" style="font-size:.84rem;"><%= eur(val) %></span>
+            </div>
+            <div class="meter"><div class="meter__fill" style="width:<%= (val / maxc * 100).round %>%;"></div></div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
 </div>
