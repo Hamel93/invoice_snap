@@ -121,52 +121,76 @@ html, body { background: $is-surround; }
   display: flex;
   justify-content: space-between;
   align-items: stretch;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 14px;
 }
 .quick__btn {
-  width: 82px;
-  min-width: 82px;
-  max-width: 82px;
-  height: 112px;
-  flex: 0 0 82px;
+  flex: 1 1 0;
+  min-width: 0;
+  aspect-ratio: 1 / 1.12;
 
-  border-radius: 22px;
-  background: white;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  border-radius: 20px;
+  background: $is-white;
+  border: 1px solid rgba(15, 23, 42, .04);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, .06);
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
+  padding: 12px 6px;
 
   text-decoration: none;
-  color: #312e81;
-  font-weight: 700;
-  font-size: .92rem;
+  color: $is-ink;
+  font-weight: 600;
+  font-size: .76rem;
+  letter-spacing: .01em;
 
-  transition: transform .15s ease, box-shadow .15s ease;
-
-  i {
-    font-size: 1.6rem;
-    color: #4338ca;
-  }
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
-  }
-
-  &.is-primary {
-    background: $is-primary;
-    color: $is-white;
-    box-shadow: 0 6px 16px rgba(46, 38, 184, .4);
-
-    i {
-      color: $is-white;
-    }
+    box-shadow: 0 10px 22px rgba(15, 23, 42, .1);
+    color: $is-ink;
   }
 }
+
+.quick__btn__chip {
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $is-lilac-bg;
+  color: $is-primary;
+  transition: transform .18s ease;
+
+  i { font-size: 1.05rem; }
+}
+
+.quick__btn__lbl {
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.quick__btn:hover .quick__btn__chip { transform: scale(1.06); }
+
+// --- Variants ---
+.quick__btn--upload .quick__btn__chip { background: $is-ok-bg;     color: $is-ok; }
+.quick__btn--search .quick__btn__chip { background: $is-warn-bg;   color: $is-warn; }
+
+.quick__btn.is-primary {
+  background: $is-gradient;
+  color: $is-white;
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(46, 38, 184, .32);
+
+  .quick__btn__chip { background: rgba(255,255,255,.18); color: $is-white; }
+}
+
+.quick__btn.is-primary:hover { color: $is-white; box-shadow: 0 12px 26px rgba(46, 38, 184, .4); }
 
 // ---- Alert banner ---------------------------------------------------
 .alert-soft {

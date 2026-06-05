@@ -27,7 +27,4 @@ class PagesController < ApplicationController
                          .where(invoices: { user_id: current_user.id })
                          .order(reminder_date: :asc)
   end
-
-  def statistics
-  end
 end
