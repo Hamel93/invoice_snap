@@ -356,3 +356,166 @@ html, body { background: $is-surround; }
 .divider-line { height:1px; background:$is-line; }
 .divider-soft { height:1px; background:#f0f0f4; }
 .timeline-line { width:2px; background:$is-line; }
+
+
+
+/* Folder filter tabs */
+.chip-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 2px 2px 12px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+}
+
+.chip-row::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex: 0 0 auto;
+  min-width: fit-content;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #e5e7f0;
+  color: #312e81;
+  font-weight: 700;
+  font-size: .82rem;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.chip.is-active {
+  background: #4039d4;
+  border-color: #4039d4;
+  color: #fff;
+}
+
+/* Folder tabs fixed */
+.folder-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 0 14px;
+  margin-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.folder-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.folder-tab {
+  flex: 0 0 auto;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #e5e7f0;
+  color: #312e81;
+  font-weight: 700;
+  font-size: .82rem;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.folder-tab.is-active {
+  background: #4039d4;
+  border-color: #4039d4;
+  color: #fff;
+}
+
+.folder-card--new {
+  border: 2px dashed #d4d4e6;
+  box-shadow: none;
+  min-height: 128px;
+}
+
+.folder-card--new i {
+  font-size: 1.2rem;
+  color: #4039d4;
+}
+
+.folder-card--new span {
+  font-size: .8rem;
+  font-weight: 600;
+  color: #6b6b88;
+}
+
+.period-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  background: #e9e8f3;
+  padding: 6px;
+  border-radius: 14px;
+}
+
+.period-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border-radius: 12px;
+  color: #6b6b88;
+  font-weight: 700;
+  font-size: .82rem;
+  text-decoration: none;
+}
+
+.period-tab.active {
+  background: #fff;
+  color: #4039d4;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
+}
+
+.period-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  border-radius: 13px;
+  color: #6b6b88;
+  font-weight: 700;
+  font-size: .84rem;
+  text-decoration: none;
+}
+
+.period-tab.active {
+  background: #fff;
+  color: #4039d4;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
+}
+
+/* Statistics period tabs fixed */
+.period-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  background: #e9e8f3;
+  padding: 6px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+
+.period-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border-radius: 12px;
+  color: #6b6b88;
+  font-weight: 700;
+  font-size: .84rem;
+  text-decoration: none;
+}
+
+.period-tab.active {
+  background: #fff;
+  color: #4039d4;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
+}

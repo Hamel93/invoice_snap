@@ -4,6 +4,10 @@ class InvoicesController < ApplicationController
 
   def index
     @invoices = current_user.invoices.order(created_at: :desc)
+
+    if params[:status].present?
+      @invoices = @invoices.where(status: params[:status])
+    end
   end
 
   def show
@@ -25,6 +29,7 @@ class InvoicesController < ApplicationController
       if @invoice.document.attached?
         Rails.logger.info("OCR START invoice_id=#{@invoice.id}")
         InvoiceOcrService.new(@invoice).call
+        InvoiceAutoClassifierService.new(@invoice.reload).call
         Rails.logger.info("OCR END invoice_id=#{@invoice.id}")
       else
         Rails.logger.info("OCR SKIPPED no document invoice_id=#{@invoice.id}")
