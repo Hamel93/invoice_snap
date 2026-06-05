@@ -40,7 +40,7 @@
   </div>
 
   <div class="card-soft section-gap">
-    <h2 class="section-title mb-3">Revenus par mois</h2>
+    <h2 class="section-title mb-3">Dépenses par mois</h2>
     <div class="bars">
       <% monthly.each do |label, val| %>
         <div class="bars__bar <%= 'is-hi' if val == maxv && maxv > 1 %>" style="height:<%= [(val / maxv * 150).round, 6].max %>px;"></div>
