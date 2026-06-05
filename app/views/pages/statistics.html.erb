@@ -26,10 +26,10 @@
 
 <div class="app-pad" style="margin-top:18px;">
   <div class="segmented mb-3">
-    <span class="segmented__item">7 J</span>
-    <span class="segmented__item is-active">1 M</span>
-    <span class="segmented__item">3 M</span>
-    <span class="segmented__item">1 an</span>
+    <%= link_to "7 J", statistics_path(period: "7d"), class: "period-tab #{'active' if params[:period] == '7d'}" %>
+    <%= link_to "1 M", statistics_path(period: "1m"), class: "period-tab #{'active' if params[:period].blank? || params[:period] == '1m'}" %>
+    <%= link_to "3 M", statistics_path(period: "3m"), class: "period-tab #{'active' if params[:period] == '3m'}" %>
+    <%= link_to "1 an", statistics_path(period: "1y"), class: "period-tab #{'active' if params[:period] == '1y'}" %>
   </div>
 
   <div class="row g-2">
