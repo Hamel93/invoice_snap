@@ -25,6 +25,7 @@ class InvoicesController < ApplicationController
       if @invoice.document.attached?
         Rails.logger.info("OCR START invoice_id=#{@invoice.id}")
         InvoiceOcrService.new(@invoice).call
+        InvoiceAutoClassifierService.new(@invoice.reload).call
         Rails.logger.info("OCR END invoice_id=#{@invoice.id}")
       else
         Rails.logger.info("OCR SKIPPED no document invoice_id=#{@invoice.id}")

@@ -331,3 +331,38 @@ html, body { background: $is-surround; }
 .timeline-line { width:2px; background:$is-line; }
 
 
+
+/* Folder filter tabs */
+.chip-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 2px 2px 12px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+}
+
+.chip-row::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex: 0 0 auto;
+  min-width: fit-content;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #e5e7f0;
+  color: #312e81;
+  font-weight: 700;
+  font-size: .82rem;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.chip.is-active {
+  background: #4039d4;
+  border-color: #4039d4;
+  color: #fff;
+}
