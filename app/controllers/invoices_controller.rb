@@ -4,6 +4,10 @@ class InvoicesController < ApplicationController
 
   def index
     @invoices = current_user.invoices.order(created_at: :desc)
+
+    if params[:status].present?
+      @invoices = @invoices.where(status: params[:status])
+    end
   end
 
   def show
