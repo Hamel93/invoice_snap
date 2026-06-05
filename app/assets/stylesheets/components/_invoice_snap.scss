@@ -463,3 +463,32 @@ html, body { background: $is-surround; }
   color: #4039d4;
   box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
 }
+
+/* Statistics period tabs fixed */
+.period-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  background: #e9e8f3;
+  padding: 6px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+
+.period-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border-radius: 12px;
+  color: #6b6b88;
+  font-weight: 700;
+  font-size: .84rem;
+  text-decoration: none;
+}
+
+.period-tab.active {
+  background: #fff;
+  color: #4039d4;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
+}

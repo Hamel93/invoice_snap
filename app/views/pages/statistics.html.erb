@@ -25,12 +25,12 @@
 <%= render "shared/screen_header", title: "Statistiques", subtitle: "Vue d'ensemble de votre activité" %>
 
 <div class="app-pad" style="margin-top:18px;">
-  <div class="segmented mb-3">
-    <%= link_to "7 J", statistics_path(period: "7d"), class: "period-tab #{'active' if params[:period] == '7d'}" %>
-    <%= link_to "1 M", statistics_path(period: "1m"), class: "period-tab #{'active' if params[:period].blank? || params[:period] == '1m'}" %>
-    <%= link_to "3 M", statistics_path(period: "3m"), class: "period-tab #{'active' if params[:period] == '3m'}" %>
-    <%= link_to "1 an", statistics_path(period: "1y"), class: "period-tab #{'active' if params[:period] == '1y'}" %>
-  </div>
+  <div class="period-tabs">
+  <%= link_to "7 J", statistics_path(period: "7d"), class: "period-tab #{'active' if params[:period] == '7d'}" %>
+  <%= link_to "1 M", statistics_path(period: "1m"), class: "period-tab #{'active' if params[:period].blank? || params[:period] == '1m'}" %>
+  <%= link_to "3 M", statistics_path(period: "3m"), class: "period-tab #{'active' if params[:period] == '3m'}" %>
+  <%= link_to "1 an", statistics_path(period: "1y"), class: "period-tab #{'active' if params[:period] == '1y'}" %>
+</div>
 
   <div class="row g-2">
     <div class="col-6"><div class="kpi"><div class="kpi__icon" style="background:#dcfce7;color:#16a34a;font-weight:700;">$</div><div class="kpi__num mt-2"><%= eur(ca) %></div><div class="kpi__lbl">CA encaissé</div></div></div>
