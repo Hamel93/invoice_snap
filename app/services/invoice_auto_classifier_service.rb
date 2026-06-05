@@ -1,17 +1,9 @@
 class InvoiceAutoClassifierService
   CATEGORY_KEYWORDS = {
-    "Factures" => [
-      "facture", "invoice", "total", "montant", "paiement", "échéance", "due date"
-    ],
-    "Reçus" => [
-      "reçu", "receipt", "transaction", "achat", "tps", "tvq", "tax", "débit", "visa", "mastercard"
-    ],
-    "Contrats" => [
-      "contrat", "contract", "agreement", "signature", "conditions", "clause"
-    ],
-    "Devis" => [
-      "devis", "quote", "estimation", "soumission", "proposal"
-    ]
+    "Facture" => ["facture", "invoice", "total", "montant", "paiement", "échéance", "due date"],
+    "Reçu" => ["reçu", "receipt", "transaction", "achat", "tps", "tvq", "tax", "débit", "visa", "mastercard"],
+    "Contrat" => ["contrat", "contract", "agreement", "signature", "conditions", "clause"],
+    "Devis" => ["devis", "quote", "estimation", "soumission", "proposal"]
   }.freeze
 
   def initialize(invoice)
@@ -22,7 +14,7 @@ class InvoiceAutoClassifierService
 
   def call
     assign_year_folder
-    assign_category_folder
+    assign_category_only
   end
 
   private
@@ -35,22 +27,17 @@ class InvoiceAutoClassifierService
     @invoice.folders << folder unless @invoice.folders.exists?(folder.id)
   end
 
-  def assign_category_folder
-    category_name = detect_category
-    return if category_name.blank?
-
-    folder = @user.folders.find_or_create_by!(name: category_name)
-    @invoice.folders << folder unless @invoice.folders.exists?(folder.id)
-
-    @invoice.update(category: category_name)
+  def assign_category_only
+    @invoice.update(category: detect_category)
   end
 
   def extract_year
-    date = @invoice.due_date || @invoice.created_at
-    return date.year.to_s if date.present?
+    return @invoice.due_date.year.to_s if @invoice.due_date.present?
 
     match = @text.match(/\b(20\d{2})\b/)
-    match&.[](1)
+    return match[1] if match
+
+    @invoice.created_at.year.to_s
   end
 
   def detect_category
@@ -58,6 +45,6 @@ class InvoiceAutoClassifierService
       return category if keywords.any? { |keyword| @text.include?(keyword) }
     end
 
-    "Factures"
+    "Facture"
   end
 end
