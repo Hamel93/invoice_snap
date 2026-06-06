@@ -8,6 +8,11 @@ class InvoicesController < ApplicationController
     if params[:status].present?
       @invoices = @invoices.where(status: params[:status])
     end
+
+    respond_to do |format|
+      format.html
+      format.csv { send_csv_export }
+    end
   end
 
   def show
@@ -69,7 +74,10 @@ class InvoicesController < ApplicationController
                             .where("company_name ILIKE ? OR invoice_number ILIKE ? OR category ILIKE ?", "%#{@query}%", "%#{@query}%", "%#{@query}%")
                             .order(created_at: :desc)
 
-    render :index
+    respond_to do |format|
+      format.html { render :index }
+      format.csv { send_csv_export }
+    end
   end
 
   def camera
@@ -80,6 +88,12 @@ class InvoicesController < ApplicationController
   end
 
   private
+
+  def send_csv_export
+    send_data InvoicesCsvExporter.new(@invoices).to_csv,
+              filename: "factures-#{Date.current.strftime('%Y-%m-%d')}.csv",
+              type: "text/csv; charset=utf-8"
+  end
 
   def set_invoice
     @invoice = current_user.invoices.find(params[:id])
