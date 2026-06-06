@@ -21,6 +21,13 @@
   </div>
 
   <% if invoices.any? %>
+    <div class="mb-3 text-end">
+      <%= link_to invoices_path(request.query_parameters.merge(format: :csv)),
+                  class: "btn btn-outline-secondary btn-sm" do %>
+        <i class="fa-solid fa-file-arrow-down"></i> Exporter en CSV
+      <% end %>
+    </div>
+
     <% invoices.each do |invoice| %>
       <%= render "shared/invoice_row", invoice: invoice %>
     <% end %>
