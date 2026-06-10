@@ -6,15 +6,15 @@
       back: dashboard_path %>
 
 <div class="app-pad" style="margin-top:18px;">
-  <div class="card-soft text-center">
-    <div class="folder-card__icon mx-auto mb-3" style="background:#eceafe;color:#4039d4;">
-      <i class="fa-solid fa-camera"></i>
-    </div>
 
-    <h2 class="section-title mb-2">Ajouter une facture</h2>
+  <div class="card-soft text-center">
+
+    <h2 class="section-title mb-2">
+      Importer une facture
+    </h2>
 
     <p class="faint mb-4" style="font-size:.86rem;">
-      Sur mobile, le bouton ouvre la caméra. Sur ordinateur, il ouvre le choix de fichier.
+      Prenez une photo ou sélectionnez un document PDF depuis votre appareil.
     </p>
 
     <%= form_with model: current_user.invoices.new,
@@ -29,14 +29,21 @@
       <%= f.hidden_field :category, value: "OCR" %>
 
       <label class="btn btn-grad btn-lg w-100 mb-0">
+
         <i class="fa-solid fa-camera me-2"></i>
-        Prendre ou choisir une photo
+
+        Ajouter une facture
+
         <%= f.file_field :document,
               accept: "image/*,.pdf",
               capture: "environment",
               class: "d-none",
               onchange: "this.form.submit();" %>
+
       </label>
+
     <% end %>
+
   </div>
+
 </div>
