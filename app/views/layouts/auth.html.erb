@@ -16,7 +16,13 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-  </head>
+      <link rel="manifest" href="<%= asset_path 'manifest.json' %>">
+    <meta name="theme-color" content="#4039d4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Invoice Snap">
+    <link rel="apple-touch-icon" href="<%= image_path 'icon.png' %>">
+</head>
 
   <body>
     <div class="app-wrap">
