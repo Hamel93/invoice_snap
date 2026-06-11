@@ -1,12 +1,27 @@
-document.addEventListener("turbo:load", () => {
-  const messages = document.querySelectorAll(".message-target");
+function scrollToBottom(container, smooth = false) {
+  if (!container) return;
+  container.scrollTo({
+    top: container.scrollHeight,
+    behavior: smooth ? "smooth" : "auto"
+  });
+}
 
-  if (messages.length > 0) {
-    const lastMessage = messages[messages.length - 1];
+function initChatAutoscroll() {
+  const container = document.getElementById("messages");
+  if (!container) return;
 
-    lastMessage.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
+  scrollToBottom(container);
+
+  const observer = new MutationObserver(() => scrollToBottom(container, true));
+  observer.observe(container, { childList: true, subtree: true });
+
+  const form = document.getElementById("chat-form");
+  if (form) {
+    form.addEventListener("submit", () => {
+      requestAnimationFrame(() => scrollToBottom(container, true));
     });
   }
-});
+}
+
+document.addEventListener("turbo:load", initChatAutoscroll);
+document.addEventListener("turbo:render", initChatAutoscroll);
