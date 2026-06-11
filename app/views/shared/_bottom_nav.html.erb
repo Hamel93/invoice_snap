@@ -1,21 +1,37 @@
 <%
-  nav = if controller_name == "pages" && action_name == "dashboard" then :home
-        elsif controller_name == "invoices" && %w[camera scan new create].include?(action_name) then :scan
-        elsif controller_name == "folders" then :folder
-        elsif controller_name == "pages" && action_name == "profile" then :profile
-        end
+  # Map current page to one of: home, invoices, scan, calendar, profile
+  nav =
+    if controller_name == "pages" && action_name == "dashboard" then :home
+    elsif controller_name == "pages" && action_name == "profile" then :profile
+    elsif controller_name == "pages" && action_name == "notifications" then :home
+    elsif controller_name == "invoices" && %w[camera scan].include?(action_name) then :scan
+    elsif controller_name == "invoices" && %w[new create].include?(action_name) then :scan
+    elsif controller_name == "invoices" then :invoices
+    elsif controller_name == "folders" then :invoices
+    elsif controller_name == "reminders" then :calendar
+    elsif controller_name == "chats" then :home
+    end
 %>
-<nav class="bottom-nav">
+<nav class="bottom-nav" role="navigation" aria-label="Navigation principale">
   <%= link_to dashboard_path, class: "bottom-nav__item #{'is-active' if nav == :home}" do %>
     <i class="fa-solid fa-house"></i><span>Accueil</span>
   <% end %>
-  <%= link_to camera_invoices_path, class: "bottom-nav__item #{'is-active' if nav == :scan}" do %>
-    <i class="fa-solid fa-camera"></i><span>Scanner</span>
+
+  <%= link_to invoices_path, class: "bottom-nav__item #{'is-active' if nav == :invoices}" do %>
+    <i class="fa-regular fa-file-lines"></i><span>Factures</span>
   <% end %>
-  <%= link_to folders_path, class: "bottom-nav__item #{'is-active' if nav == :folder}" do %>
-    <i class="fa-solid fa-folder"></i><span>Classeur</span>
+
+  <div class="bottom-nav__fab-wrap">
+    <%= link_to camera_invoices_path, class: "bottom-nav__fab", "aria-label": "Scanner une facture" do %>
+      <i class="fa-solid fa-camera"></i>
+    <% end %>
+  </div>
+
+  <%= link_to reminders_path, class: "bottom-nav__item #{'is-active' if nav == :calendar}" do %>
+    <i class="fa-regular fa-calendar"></i><span>Calendrier</span>
   <% end %>
+
   <%= link_to profile_path, class: "bottom-nav__item #{'is-active' if nav == :profile}" do %>
-    <i class="fa-solid fa-user"></i><span>Profil</span>
+    <i class="fa-regular fa-user"></i><span>Profil</span>
   <% end %>
 </nav>

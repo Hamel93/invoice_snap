@@ -15,37 +15,43 @@
     items << [:warn, "fa-bell", "Rappel d'échéance",
               "#{r.invoice.company_name} — échéance le #{short_date(r.reminder_date)}.", invoice_path(r.invoice)]
   end
-  items = items.first(8)
+  items = items.first(10)
   tint = { danger: ["#fee2e2", "#dc2626"], ok: ["#dcfce7", "#16a34a"],
            warn: ["#fef3c7", "#d97706"], primary: ["#eceafe", "#4039d4"] }
 %>
 
 <header class="app-header app-header--rounded">
   <div class="app-header__bar">
+    <%= link_to dashboard_path, class: "app-header__back" do %>
+      <i class="fa-solid fa-chevron-left"></i>
+    <% end %>
     <h1 class="app-header__title">Notifications</h1>
     <div class="app-header__spacer"></div>
-    <a href="#" style="color:#c9c5fa;font-size:.78rem;font-weight:600;">Tout marquer lu</a>
   </div>
   <p class="app-header__sub"><%= pluralize(items.size, "notification") %></p>
 </header>
 
 <div class="app-pad" style="margin-top:18px;">
   <% if items.any? %>
-    <h2 class="section-title mb-2 faint" style="font-size:.7rem;letter-spacing:2px;">RÉCENT</h2>
+    <div class="section-eyebrow mb-2">Récentes</div>
     <% items.each do |kind, icon, title, body, url| %>
       <% c = tint[kind] %>
       <%= link_to url, class: "list-row" do %>
-        <div class="avatar-initial" style="background:<%= c[0] %>;color:<%= c[1] %>;"><i class="fa-solid <%= icon %>"></i></div>
+        <div class="avatar-initial" style="background:<%= c[0] %>;color:<%= c[1] %>;">
+          <i class="fa-solid <%= icon %>"></i>
+        </div>
         <div class="list-row__body">
           <div class="list-row__title"><%= title %></div>
-          <div class="list-row__sub text-truncate"><%= body %></div>
+          <div class="list-row__sub text-truncate" style="font-family:inherit;color:#64748b;"><%= body %></div>
         </div>
+        <i class="fa-solid fa-chevron-right faint" style="font-size:.7rem;"></i>
       <% end %>
     <% end %>
   <% else %>
     <div class="empty-state card-soft">
       <i class="fa-regular fa-bell d-block"></i>
-      Aucune notification pour le moment.
+      <div class="empty-state__title">Vous êtes à jour</div>
+      <div class="empty-state__sub">Aucune notification pour le moment.</div>
     </div>
   <% end %>
 </div>

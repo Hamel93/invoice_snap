@@ -1,16 +1,16 @@
-<% content_for :title, "Invoice Snap — Scanner. Classer. Relancer." %>
+<% content_for :title, "Invoice Snap — Scannez. Classez. Relancez." %>
 
-<section class="auth-hero" style="padding-bottom:46px;">
+<section class="auth-hero">
   <div class="d-flex align-items-center gap-2 mb-5">
     <div class="auth-logo">IS</div>
     <span class="fw-bold fs-5">Invoice Snap</span>
   </div>
 
-  <p class="text-uppercase fw-semibold mb-2" style="letter-spacing:3px;font-size:.7rem;color:#c9c5fa;">
+  <p class="mb-2" style="font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#c9c5fa;">
     Pour freelances &amp; TPE
   </p>
 
-  <h1 style="font-size:2.05rem;font-weight:800;line-height:1.15;">
+  <h1 style="font-size:2.2rem;font-weight:800;line-height:1.1;letter-spacing:-.028em;margin:0;color:#fff;">
     Scannez, classez,<br>relancez. Sans effort.
   </h1>
 
@@ -19,7 +19,7 @@
   </p>
 </section>
 
-<section class="app-pad" style="margin-top:-26px;position:relative;z-index:2;">
+<section class="app-pad" style="margin-top:-30px;position:relative;z-index:2;">
   <div class="card-soft">
     <div class="promise mb-3">
       <div class="promise__icon" style="background:#eceafe;color:#4039d4;">
@@ -57,21 +57,13 @@
   </div>
 
   <div class="d-grid gap-2 mt-4">
-    <% if user_signed_in? %>
-      <%= link_to "Aller au dashboard", dashboard_path, class: "btn btn-grad btn-lg btn-block", data: { turbo: false } %>
-
-      <%= button_to "Déconnexion",
-                    destroy_user_session_path,
-                    method: :delete,
-                    class: "btn btn-ghost btn-block w-100" %>
-    <% else %>
-      <%= link_to "Créer un compte", new_user_registration_path, class: "btn btn-grad btn-lg btn-block", data: { turbo: false } %>
-
-      <%= link_to "J'ai déjà un compte", new_user_session_path, class: "btn btn-ghost btn-block", data: { turbo: false } %>
-    <% end %>
+    <%= link_to "Créer un compte", new_user_registration_path,
+          class: "btn btn-grad btn-lg btn-block", data: { turbo: false } %>
+    <%= link_to "J'ai déjà un compte", new_user_session_path,
+          class: "btn btn-ghost btn-block", data: { turbo: false } %>
   </div>
 
-  <p class="text-center faint mt-3 mb-4" style="font-size:.72rem;">
+  <p class="text-center faint mt-3 mb-4" style="font-size:.74rem;font-weight:500;">
     Sans carte bancaire · 14 jours d'essai
   </p>
 </section>

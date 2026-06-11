@@ -1,41 +1,79 @@
-<% content_for :title, "Historique" %>
-<% invoices = @invoices.to_a %>
-<% total = invoices.sum { |i| i.amount.to_f } %>
-<% pending = invoices.select { |i| i.status.to_s.downcase == "pending" }.sum { |i| i.amount.to_f } %>
+<% content_for :title, "Factures" %>
+<%
+  invoices = @invoices.to_a
+  total    = invoices.sum { |i| i.amount.to_f }
+  all_user_invoices = current_user.invoices
+  counts = {
+    "all"     => all_user_invoices.count,
+    "paid"    => all_user_invoices.where(status: "paid").count,
+    "pending" => all_user_invoices.where(status: "pending").count,
+    "overdue" => all_user_invoices.where(status: "overdue").count
+  }
+  status_label = { "all" => "Toutes", "paid" => "Payées", "pending" => "En attente", "overdue" => "En retard" }
+%>
 
 <header class="app-header app-header--rounded">
   <div class="app-header__bar">
-    <h1 class="app-header__title">Historique</h1>
+    <h1 class="app-header__title">Mes factures</h1>
     <div class="app-header__spacer"></div>
-    <%= link_to search_invoices_path, class: "app-header__icon" do %><i class="fa-solid fa-magnifying-glass"></i><% end %>
+    <%= link_to invoices_path(format: :csv, q: @query, status: (@status_filter == "all" ? nil : @status_filter)),
+                class: "app-header__icon", title: "Exporter en CSV" do %>
+      <i class="fa-solid fa-file-arrow-down"></i>
+    <% end %>
   </div>
-  <p class="app-header__sub"><%= pluralize(invoices.size, "document") %> · <%= eur(total) %> au total</p>
+
+  <p class="app-header__sub">
+    <%= pluralize(invoices.size, "document") %> · <%= eur(total) %>
+  </p>
+
+  <%= form_with url: invoices_path, method: :get, local: true, data: { turbo: false }, class: "mt-3" do %>
+    <div style="position:relative;">
+      <i class="fa-solid fa-magnifying-glass"
+         style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9494ae;font-size:.86rem;"></i>
+      <%= text_field_tag :q, @query,
+            placeholder: "Client, n° facture, catégorie…",
+            class: "form-control",
+            style: "padding-left:40px;border:0;background:rgba(255,255,255,.95);" %>
+      <% if @status_filter != "all" %>
+        <%= hidden_field_tag :status, @status_filter %>
+      <% end %>
+    </div>
+  <% end %>
 </header>
 
 <div class="app-pad" style="margin-top:18px;">
-  <div class="chip-row mb-3">
-    <span class="chip is-active">Tout</span>
-    <span class="chip">Payées</span>
-    <span class="chip">En attente</span>
-    <span class="chip">En retard</span>
+  <div class="chip-row">
+    <% %w[all paid pending overdue].each do |key| %>
+      <%= link_to invoices_path(status: key, q: @query),
+            class: "chip #{'is-active' if @status_filter == key}" do %>
+        <%= status_label[key] %>
+        <span class="chip__count"><%= counts[key] %></span>
+      <% end %>
+    <% end %>
   </div>
 
   <% if invoices.any? %>
-    <div class="mb-3 text-end">
-      <%= link_to invoices_path(request.query_parameters.merge(format: :csv)),
-                  class: "btn btn-outline-secondary btn-sm" do %>
-        <i class="fa-solid fa-file-arrow-down"></i> Exporter en CSV
-      <% end %>
-    </div>
+    <% if @query.present? %>
+      <p class="muted mb-3" style="font-size:.82rem;">
+        <strong class="text-dark"><%= pluralize(invoices.size, "résultat") %></strong> pour « <%= @query %> »
+      </p>
+    <% end %>
 
     <% invoices.each do |invoice| %>
       <%= render "shared/invoice_row", invoice: invoice %>
     <% end %>
   <% else %>
     <div class="empty-state card-soft">
-      <i class="fa-solid fa-file-invoice d-block"></i>
-      Aucun document dans l'historique.
-      <div class="mt-3"><%= link_to "Scanner une facture", camera_invoices_path, class: "btn btn-grad" %></div>
+      <i class="<%= @query.present? ? 'fa-solid fa-magnifying-glass' : 'fa-regular fa-file-lines' %> d-block"></i>
+      <% if @query.present? %>
+        <div class="empty-state__title">Aucun résultat</div>
+        <div class="empty-state__sub">Aucune facture ne correspond à « <%= @query %> ».</div>
+        <%= link_to "Effacer la recherche", invoices_path, class: "btn btn-ghost" %>
+      <% else %>
+        <div class="empty-state__title">Aucune facture</div>
+        <div class="empty-state__sub">Commencez par scanner votre premier document.</div>
+        <%= link_to "Scanner une facture", camera_invoices_path, class: "btn btn-grad" %>
+      <% end %>
     </div>
   <% end %>
 </div>

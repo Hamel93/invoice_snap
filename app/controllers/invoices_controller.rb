@@ -4,10 +4,20 @@ class InvoicesController < ApplicationController
 
   def index
     @invoices = current_user.invoices.order(created_at: :desc)
+    @query    = params[:q].to_s.strip
 
-    if params[:status].present?
+    if @query.present?
+      @invoices = @invoices.where(
+        "company_name ILIKE :q OR invoice_number ILIKE :q OR category ILIKE :q",
+        q: "%#{@query}%"
+      )
+    end
+
+    if params[:status].present? && params[:status] != "all"
       @invoices = @invoices.where(status: params[:status])
     end
+
+    @status_filter = params[:status].presence || "all"
 
     respond_to do |format|
       format.html
@@ -68,16 +78,7 @@ class InvoicesController < ApplicationController
   end
 
   def search
-    @query = params[:query].to_s.strip
-
-    @invoices = current_user.invoices
-                            .where("company_name ILIKE ? OR invoice_number ILIKE ? OR category ILIKE ?", "%#{@query}%", "%#{@query}%", "%#{@query}%")
-                            .order(created_at: :desc)
-
-    respond_to do |format|
-      format.html { render :index }
-      format.csv { send_csv_export }
-    end
+    redirect_to invoices_path(q: params[:query].presence || params[:q])
   end
 
   def camera

@@ -1,109 +1,46 @@
-<div class="container py-4">
+<% content_for :title, "Assistant IA" %>
 
-  <div class="app-header app-header--rounded mb-4">
-
-    <h1 class="fw-bold text-white mb-2">
-      AI Assistant 🤖
-    </h1>
-
-    <p class="text-white-50 mb-0">
-      Analysez vos factures et obtenez des recommandations personnalisées.
-    </p>
-
-  </div>
-
-  <div class="d-flex justify-content-center mb-4">
-
-    <%= button_to chats_path,
-                  method: :post,
-                  class: "btn btn-grad rounded-pill px-4 py-2" do %>
-
-      <i class="fa-solid fa-plus me-2"></i>
-      Nouveau chat
-
+<header class="app-header app-header--rounded">
+  <div class="app-header__bar">
+    <%= link_to dashboard_path, class: "app-header__back" do %>
+      <i class="fa-solid fa-chevron-left"></i>
     <% end %>
-
+    <h1 class="app-header__title">Assistant IA</h1>
+    <div class="app-header__spacer"></div>
+    <%= button_to chats_path, method: :post,
+          class: "app-header__icon", "aria-label": "Nouvelle conversation",
+          data: { turbo: false } do %>
+      <i class="fa-solid fa-plus"></i>
+    <% end %>
   </div>
+  <p class="app-header__sub">Analysez vos factures et obtenez des conseils personnalisés.</p>
+</header>
 
+<div class="app-pad" style="margin-top:18px;">
   <% if @chats.any? %>
-
-    <div class="row">
-
-      <% @chats.each do |chat| %>
-
-        <div class="col-12 mb-3">
-
-          <div class="card border-0 shadow-sm rounded-4 p-4">
-
-            <div class="d-flex justify-content-between align-items-start">
-
-              <div class="d-flex align-items-center">
-
-                <div class="folder-icon me-3">
-                  <i class="fa-solid fa-robot"></i>
-                </div>
-
-                <div>
-
-                  <h5 class="mb-1 fw-semibold"
-                      title="<%= chat.title %>">
-
-                    <%= chat.title.truncate(40) %>
-
-                  </h5>
-
-                  <p class="text-muted small mb-2">
-                    <%= pluralize(chat.messages.count, "message") %>
-                  </p>
-
-                  <%= link_to "Ouvrir",
-                              chat_path(chat),
-                              class: "btn btn-grad rounded-pill btn-sm" %>
-
-                </div>
-
-              </div>
-
-              <%= link_to chat_path(chat),
-                          data: {
-                            turbo_method: :delete,
-                            turbo_confirm: "Supprimer cette conversation ?"
-                          },
-                          class: "text-danger fs-5" do %>
-
-                <i class="fa-solid fa-trash"></i>
-
-              <% end %>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      <% end %>
-
-    </div>
-
-  <% else %>
-
-    <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
-
-      <div style="font-size: 3rem;">
-        🤖
+    <div class="section-eyebrow mb-2">Conversations</div>
+    <% @chats.each do |chat| %>
+      <div class="chat-list-item">
+        <div class="chat-list-item__icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        <%= link_to chat_path(chat), class: "chat-list-item__body text-decoration-none" do %>
+          <div class="chat-list-item__title text-truncate"><%= chat.title.truncate(48) %></div>
+          <div class="chat-list-item__sub"><%= pluralize(chat.messages.count, "message") %></div>
+        <% end %>
+        <%= link_to chat_path(chat),
+              data: { turbo_method: :delete, turbo_confirm: "Supprimer cette conversation ?" },
+              class: "chat-list-item__del", "aria-label": "Supprimer" do %>
+          <i class="fa-solid fa-trash"></i>
+        <% end %>
       </div>
-
-      <h3 class="fw-bold mt-3">
-        Aucune conversation
-      </h3>
-
-      <p class="text-muted">
-        Commencez votre première analyse financière avec l'IA en cliquant sur "Nouveau chat".
-      </p>
-
-
+    <% end %>
+  <% else %>
+    <div class="empty-state card-soft">
+      <i class="fa-solid fa-wand-magic-sparkles d-block"></i>
+      <div class="empty-state__title">Aucune conversation</div>
+      <div class="empty-state__sub">Commencez votre première analyse financière avec l'IA.</div>
+      <%= button_to chats_path, method: :post, class: "btn btn-grad", data: { turbo: false } do %>
+        <i class="fa-solid fa-plus me-2"></i>Nouvelle conversation
+      <% end %>
     </div>
-
   <% end %>
-
 </div>

@@ -1,7 +1,9 @@
 <%# locals: folder: %>
 <%= form_with model: folder, class: "card-soft" do |f| %>
   <% if folder.errors.any? %>
-    <div class="alert alert-danger py-2" style="font-size:.82rem;"><%= folder.errors.full_messages.first %></div>
+    <div class="alert alert-danger py-2" style="font-size:.82rem;border-radius:14px;">
+      <%= folder.errors.full_messages.first %>
+    </div>
   <% end %>
   <div class="mb-4">
     <%= f.label :name, "Nom du classeur", class: "form-label" %>

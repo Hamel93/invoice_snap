@@ -9,6 +9,7 @@ class RemindersController < ApplicationController
   end
 
   def show
+    redirect_to reminders_path
   end
 
   def new
@@ -21,7 +22,7 @@ class RemindersController < ApplicationController
     @reminder = @invoice.reminders.new(reminder_params.except(:invoice_id))
 
     if @reminder.save
-      redirect_to invoice_path(@invoice), notice: "Rappel créé avec succès."
+      redirect_back fallback_location: reminders_path, notice: "Rappel créé avec succès."
     else
       @invoices = current_user.invoices.order(created_at: :desc)
       render :new, status: :unprocessable_entity
@@ -34,7 +35,7 @@ class RemindersController < ApplicationController
 
   def update
     if @reminder.update(reminder_params)
-      redirect_to reminder_path(@reminder), notice: "Rappel mis à jour avec succès."
+      redirect_to reminders_path, notice: "Rappel mis à jour avec succès."
     else
       @invoices = current_user.invoices.order(created_at: :desc)
       render :edit, status: :unprocessable_entity
