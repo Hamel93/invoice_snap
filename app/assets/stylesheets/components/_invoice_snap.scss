@@ -726,7 +726,7 @@ html, body { background: $is-surround; font-family: $body-font; color: $is-ink; 
 // ---- Empty state ---------------------------------------------------
 .empty-state {
   text-align: center; padding: 48px 24px; color: $is-muted;
-  i { font-size: 2.6rem; color: $is-faint; margin-bottom: 14px; opacity: .7; }
+  > i { font-size: 2.6rem; color: $is-faint; margin-bottom: 14px; opacity: .7; }
   .empty-state__title { font-size: 1rem; font-weight: 700; color: $is-ink; margin: 0 0 6px; }
   .empty-state__sub { font-size: .85rem; color: $is-muted; margin-bottom: 18px; }
 }
