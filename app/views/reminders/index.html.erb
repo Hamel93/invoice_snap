@@ -1,57 +1,140 @@
 <% content_for :title, "Calendrier" %>
 <%
-  today   = Date.today
-  first   = today.beginning_of_month
-  offset  = (first.wday + 6) % 7
-  days_in = today.end_of_month.day
-  rem     = @reminders.to_a
-  rdays   = rem.map(&:reminder_date).compact.select { |d| d.month == today.month && d.year == today.year }.map(&:day)
+  today    = Date.today
+  first    = today.beginning_of_month
+  offset   = (first.wday + 6) % 7
+  days_in  = today.end_of_month.day
+  rem      = @reminders.to_a
+  rdays    = rem.map(&:reminder_date).compact
+                .select { |d| d.month == today.month && d.year == today.year }.map(&:day)
   upcoming = rem.select { |r| r.reminder_date && r.reminder_date >= today }.sort_by(&:reminder_date)
+  past_due = rem.select { |r| r.reminder_date && r.reminder_date < today && !r.sent }
 %>
 
-<%= render "shared/screen_header", title: "Calendrier",
-      subtitle: "#{ApplicationHelper::FR_MONTHS[today.month].capitalize} #{today.year} · #{pluralize(rem.size, "échéance")}" %>
+<header class="app-header app-header--rounded">
+  <div class="app-header__bar">
+    <h1 class="app-header__title">Calendrier</h1>
+    <div class="app-header__spacer"></div>
+    <button type="button" class="app-header__icon"
+            data-bs-toggle="modal" data-bs-target="#reminderModal"
+            aria-label="Ajouter un rappel">
+      <i class="fa-solid fa-plus"></i>
+    </button>
+  </div>
+  <p class="app-header__sub">
+    <%= ApplicationHelper::FR_MONTHS[today.month].capitalize %> <%= today.year %>
+    · <%= pluralize(rem.size, "échéance") %>
+  </p>
+</header>
 
 <div class="app-pad" style="margin-top:18px;">
+  <% if past_due.any? %>
+    <div class="alert-soft alert-soft--danger mb-3">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <div><strong><%= pluralize(past_due.size, "rappel") %> en retard</strong> à traiter.</div>
+    </div>
+  <% end %>
+
   <div class="cal">
     <div class="cal__head">
-      <span class="app-header__back" style="background:#f0f0f6;color:#44445e;"><i class="fa-solid fa-chevron-left"></i></span>
-      <span class="fw-bold"><%= ApplicationHelper::FR_MONTHS[today.month].capitalize %> <%= today.year %></span>
-      <span class="app-header__back" style="background:#f0f0f6;color:#44445e;"><i class="fa-solid fa-chevron-right"></i></span>
+      <button type="button" class="cal__nav-btn" aria-label="Mois précédent">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <span class="cal__head-title">
+        <%= ApplicationHelper::FR_MONTHS[today.month].capitalize %> <%= today.year %>
+      </span>
+      <button type="button" class="cal__nav-btn" aria-label="Mois suivant">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
     </div>
     <div class="cal__grid">
       <% %w[Lun Mar Mer Jeu Ven Sam Dim].each do |d| %><div class="cal__dow"><%= d %></div><% end %>
-      <% offset.times do %><div class="cal__cell"></div><% end %>
+      <% offset.times do %><div class="cal__cell is-muted"></div><% end %>
       <% (1..days_in).each do |day| %>
         <div class="cal__cell <%= 'is-today' if day == today.day %>">
           <span><%= day %></span>
-          <% if rdays.include?(day) %><span class="cal__dot" style="background:<%= day == today.day ? '#fff' : '#d97706' %>;"></span><% end %>
+          <% if rdays.include?(day) %>
+            <span class="cal__dot" style="background:<%= day == today.day ? '#fff' : '#d97706' %>;"></span>
+          <% end %>
         </div>
       <% end %>
     </div>
   </div>
 
-  <h2 class="section-title section-gap mb-2">Échéances à venir</h2>
+  <div class="d-flex justify-content-between align-items-center section-gap mb-2">
+    <div>
+      <div class="section-eyebrow">À venir</div>
+      <h2 class="section-title">Échéances</h2>
+    </div>
+  </div>
+
   <% if upcoming.any? %>
-    <% upcoming.first(6).each do |r| %>
+    <% upcoming.first(8).each do |r| %>
       <% inv = r.invoice %>
       <%= link_to invoice_path(inv), class: "list-row" do %>
-        <div class="text-center" style="width:46px;">
-          <div class="fw-bold" style="color:#4039d4;line-height:1;font-size:1.05rem;"><%= r.reminder_date.day %></div>
-          <div class="faint text-uppercase" style="font-size:.58rem;"><%= ApplicationHelper::FR_MONTHS_SHORT[r.reminder_date.month] %></div>
+        <% pill_class = r.reminder_date < Date.today + 3 ? "date-pill--warn" : "" %>
+        <div class="date-pill <%= pill_class %>">
+          <div class="date-pill__day"><%= r.reminder_date.day %></div>
+          <div class="date-pill__mo"><%= ApplicationHelper::FR_MONTHS_SHORT[r.reminder_date.month] %></div>
         </div>
         <div class="list-row__body">
-          <div class="list-row__title"><%= inv.company_name.presence || "Facture" %></div>
-          <div class="list-row__sub">Échéance <%= short_date(r.reminder_date) %></div>
+          <div class="list-row__title text-truncate"><%= inv.company_name.presence || "Facture" %></div>
+          <div class="list-row__sub">Échéance · <%= short_date(r.reminder_date) %></div>
         </div>
         <div class="list-row__amount"><%= eur(inv.amount) %></div>
       <% end %>
     <% end %>
   <% else %>
-    <div class="empty-state card-soft"><i class="fa-regular fa-calendar d-block"></i>Aucune échéance à venir.</div>
+    <div class="empty-state card-soft">
+      <i class="fa-regular fa-calendar d-block"></i>
+      <div class="empty-state__title">Aucune échéance à venir</div>
+      <div class="empty-state__sub">Programmez un rappel pour ne plus oublier vos paiements.</div>
+      <button type="button" class="btn btn-grad"
+              data-bs-toggle="modal" data-bs-target="#reminderModal">
+        <i class="fa-solid fa-plus me-2"></i>Ajouter un rappel
+      </button>
+    </div>
   <% end %>
+</div>
 
-  <%= link_to new_reminder_path, class: "btn btn-grad w-100 mt-3" do %>
-    <i class="fa-solid fa-plus me-2"></i>Ajouter un rappel
-  <% end %>
+<%# Modale création de rappel %>
+<div class="modal fade" id="reminderModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered px-3">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div>
+            <div class="section-eyebrow mb-0">Rappel</div>
+            <h2 class="section-title mt-1">Nouveau rappel</h2>
+          </div>
+          <button type="button" class="sheet__close" data-bs-dismiss="modal" aria-label="Fermer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <% invoices_for_select = current_user.invoices.order(created_at: :desc) %>
+        <% if invoices_for_select.any? %>
+          <%= form_with model: Reminder.new, url: reminders_path, data: { turbo: false } do |f| %>
+            <div class="mb-3">
+              <%= f.label :invoice_id, "Facture", class: "form-label" %>
+              <%= f.select :invoice_id,
+                    invoices_for_select.map { |i| ["#{i.company_name.presence || 'Document'} · #{i.invoice_number.presence || '—'}", i.id] },
+                    { include_blank: "Choisir une facture" }, class: "form-select", required: true %>
+            </div>
+            <div class="mb-3">
+              <%= f.label :reminder_date, "Date du rappel", class: "form-label" %>
+              <%= f.date_field :reminder_date, class: "form-control", required: true %>
+            </div>
+            <%= f.submit "Créer le rappel", class: "btn btn-grad w-100" %>
+          <% end %>
+        <% else %>
+          <div class="empty-state" style="padding:24px 0;">
+            <i class="fa-regular fa-file-lines d-block"></i>
+            <div class="empty-state__sub">Vous devez d'abord créer une facture.</div>
+            <%= link_to "Scanner une facture", camera_invoices_path, class: "btn btn-grad" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>

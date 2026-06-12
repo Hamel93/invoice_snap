@@ -1,21 +1,22 @@
-<% content_for :title, "Analyse du document" %>
+<% content_for :title, "Nouvelle facture" %>
 
-<%= render "shared/screen_header", title: "Analyse du document",
-      subtitle: "Vérifiez les données extraites par l'OCR", back: camera_invoices_path %>
+<%= render "shared/screen_header",
+      title: "Saisie manuelle",
+      subtitle: "Renseignez les informations de votre facture",
+      back: camera_invoices_path %>
 
 <div class="app-pad" style="margin-top:18px;">
-  <div class="card-soft d-flex align-items-center gap-3">
-    <div class="folder-card__icon mb-0" style="background:#eceafe;color:#4039d4;"><i class="fa-solid fa-file-invoice"></i></div>
-    <div class="flex-fill">
-      <div class="fw-semibold" style="font-size:.86rem;">Nouveau document</div>
-      <div class="faint" style="font-size:.74rem;">Importez un fichier et corrigez les champs.</div>
+  <div class="card-soft mb-3 d-flex align-items-center gap-3">
+    <div class="folder-card__icon mb-0" style="background:#eceafe;color:#4039d4;">
+      <i class="fa-solid fa-keyboard"></i>
     </div>
-    <span class="badge-status paid"><i class="fa-solid fa-circle-check me-1"></i>OCR&nbsp;prêt</span>
-  </div>
-
-  <div class="d-flex align-items-center justify-content-between section-gap mb-2">
-    <h2 class="section-title">Données extraites</h2>
-    <span class="faint" style="font-size:.74rem;">Modifiable</span>
+    <div class="flex-fill">
+      <div class="fw-semibold" style="font-size:.88rem;">Sans scanner</div>
+      <div class="faint" style="font-size:.74rem;">Vous pouvez aussi joindre un document si besoin.</div>
+    </div>
+    <%= link_to camera_invoices_path, class: "btn-soft", style: "padding:.55rem .8rem;" do %>
+      <i class="fa-solid fa-camera me-1"></i> Scanner
+    <% end %>
   </div>
 
   <%= render "form", invoice: @invoice, folders: @folders %>

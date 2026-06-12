@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
 
-  background: white;
+  background: #f3f4f6;
 }
 
 .messages-container {
@@ -14,7 +14,9 @@
 
   min-height: 0;
 
-  background: #f7f7f8;
+  background: #f3f4f6;
+
+  scroll-behavior: smooth;
 }
 
 .chat-footer {

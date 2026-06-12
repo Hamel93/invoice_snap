@@ -1,49 +1,76 @@
 <% content_for :title, "Scanner une facture" %>
+<% content_for :no_nav, "1" %>
 
-<%= render "shared/screen_header",
-      title: "Scanner une facture",
-      subtitle: "Prenez une photo ou importez un document",
-      back: dashboard_path %>
+<div class="scanner">
+  <div class="scanner__top">
+    <%= link_to dashboard_path, class: "scanner__icon-btn", "aria-label": "Fermer" do %>
+      <i class="fa-solid fa-xmark"></i>
+    <% end %>
+    <div style="font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#c9c5fa;">
+      Scanner OCR
+    </div>
+    <%= link_to new_invoice_path, class: "scanner__icon-btn", "aria-label": "Saisie manuelle" do %>
+      <i class="fa-solid fa-keyboard"></i>
+    <% end %>
+  </div>
 
-<div class="app-pad" style="margin-top:18px;">
-
-  <div class="card-soft text-center">
-
-    <h2 class="section-title mb-2">
-      Importer une facture
-    </h2>
-
-    <p class="faint mb-4" style="font-size:.86rem;">
-      Prenez une photo ou sélectionnez un document PDF depuis votre appareil.
+  <div class="scanner__stage">
+    <div class="scanner__frame">
+      <span class="tl"></span><span class="tr"></span>
+      <span class="bl"></span><span class="br"></span>
+    </div>
+    <p class="scanner__hint">
+      Cadrez votre facture dans le viseur.<br>L'OCR lira automatiquement montants, dates et clients.
     </p>
+  </div>
 
+  <div class="scanner__bottom">
     <%= form_with model: current_user.invoices.new,
                   url: invoices_path,
                   method: :post,
                   multipart: true,
                   data: { turbo: false },
-                  class: "d-grid gap-3" do |f| %>
-
+                  id: "camera-import-form",
+                  class: "d-contents" do |f| %>
       <%= f.hidden_field :company_name, value: "Document OCR" %>
       <%= f.hidden_field :status, value: "pending" %>
       <%= f.hidden_field :category, value: "OCR" %>
 
-      <label class="btn btn-grad btn-lg w-100 mb-0">
-
-        <i class="fa-solid fa-camera me-2"></i>
-
-        Ajouter une facture
-
+      <%# Import (gallery) %>
+      <label class="scanner__icon-btn" style="cursor:pointer;" title="Importer depuis la galerie">
+        <i class="fa-regular fa-image"></i>
         <%= f.file_field :document,
               accept: "image/*,.pdf",
-              capture: "environment",
               class: "d-none",
-              onchange: "this.form.submit();" %>
-
+              id: "import-file",
+              onchange: "document.getElementById('camera-import-form').submit();" %>
       </label>
-
     <% end %>
 
-  </div>
+    <%# Shutter = ouvre la caméra système %>
+    <%= form_with model: current_user.invoices.new,
+                  url: invoices_path,
+                  method: :post,
+                  multipart: true,
+                  data: { turbo: false },
+                  id: "camera-shoot-form",
+                  class: "d-contents" do |f| %>
+      <%= f.hidden_field :company_name, value: "Document OCR" %>
+      <%= f.hidden_field :status, value: "pending" %>
+      <%= f.hidden_field :category, value: "OCR" %>
 
+      <label class="scanner__shutter" aria-label="Prendre une photo">
+        <%= f.file_field :document,
+              accept: "image/*",
+              capture: "environment",
+              class: "d-none",
+              id: "shoot-file",
+              onchange: "document.getElementById('camera-shoot-form').submit();" %>
+      </label>
+    <% end %>
+
+    <%= link_to new_invoice_path, class: "scanner__icon-btn", "aria-label": "Saisie manuelle" do %>
+      <i class="fa-solid fa-pen"></i>
+    <% end %>
+  </div>
 </div>

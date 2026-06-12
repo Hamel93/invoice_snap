@@ -1,9 +1,6 @@
 <% content_for :title, "Facture #{@invoice.invoice_number}" %>
-
-<% amount = @invoice.amount.to_f %>
-<% subtotal = (amount / 1.14975).round(2) %>
-<% tps = (subtotal * 0.05).round(2) %>
-<% tvq = (subtotal * 0.09975).round(2) %>
+<% next_status = @invoice.status.to_s == "paid" ? "pending" : "paid" %>
+<% next_status_label = next_status == "paid" ? "Marquer payée" : "Remettre en attente" %>
 
 <header class="app-header app-header--pull">
   <div class="app-header__bar">
@@ -11,91 +8,125 @@
       <i class="fa-solid fa-chevron-left"></i>
     <% end %>
 
-    <span class="fw-semibold"><%= @invoice.invoice_number.presence || "Facture" %></span>
+    <span class="fw-semibold font-mono" style="font-size:.86rem;">
+      <%= @invoice.invoice_number.presence || "—" %>
+    </span>
 
     <div class="app-header__spacer"></div>
 
-    <%= link_to edit_invoice_path(@invoice), class: "app-header__icon" do %>
+    <%= link_to edit_invoice_path(@invoice), class: "app-header__icon", "aria-label": "Modifier" do %>
       <i class="fa-solid fa-pen"></i>
     <% end %>
   </div>
 
   <div class="app-header__big"><%= eur(@invoice.amount) %></div>
 
-  <div class="mt-2 d-flex align-items-center gap-2">
+  <div class="mt-2 d-flex align-items-center gap-2 flex-wrap">
     <%= status_badge(@invoice.status) %>
-
     <% if @invoice.due_date %>
-      <span style="color:#c9c5fa;font-size:.8rem;">
-        échéance le <%= short_date(@invoice.due_date) %>
+      <span style="color:#c9c5fa;font-size:.82rem;font-weight:500;">
+        échéance · <%= short_date(@invoice.due_date) %>
       </span>
     <% end %>
   </div>
 </header>
 
 <div class="app-pad" style="margin-top:18px;">
-  <div class="card-soft">
-    <h2 class="section-title mb-3">Informations</h2>
 
-    <div class="row g-3">
-      <div class="col-6">
-        <div class="muted">Client</div>
-        <div class="fw-bold"><%= @invoice.company_name.presence || "—" %></div>
-      </div>
+  <%# Actions rapides %>
+  <div class="actions-row">
+    <%= button_to invoice_path(@invoice, invoice: { status: next_status }),
+          method: :patch,
+          class: "action-tile",
+          data: { turbo: false } do %>
+      <i class="fa-solid fa-circle-check"></i>
+      <span><%= next_status_label %></span>
+    <% end %>
 
-      <div class="col-6">
-        <div class="muted">N° de facture</div>
-        <div class="fw-bold"><%= @invoice.invoice_number.presence || "—" %></div>
-      </div>
+    <a href="#addReminderModal" data-bs-toggle="modal" class="action-tile">
+      <i class="fa-regular fa-bell"></i>
+      <span>Ajouter rappel</span>
+    </a>
 
-      <div class="col-6">
-        <div class="muted">Catégorie</div>
-        <div class="fw-bold"><%= @invoice.category.presence || "—" %></div>
-      </div>
-
-      <div class="col-6">
-        <div class="muted">Échéance</div>
-        <div class="fw-bold"><%= @invoice.due_date ? short_date(@invoice.due_date) : "—" %></div>
-      </div>
-    </div>
+    <%= link_to edit_invoice_path(@invoice), class: "action-tile" do %>
+      <i class="fa-solid fa-folder-tree"></i>
+      <span>Classer</span>
+    <% end %>
   </div>
 
+  <%# Infos %>
   <div class="card-soft section-gap">
-    <h2 class="section-title mb-3">Montants</h2>
-
-    <div class="d-flex justify-content-between mb-2">
-      <span class="muted">Montant avant taxes</span>
-      <span class="fw-semibold"><%= eur(subtotal) %></span>
-    </div>
-
-    <div class="d-flex justify-content-between mb-2">
-      <span class="muted">TPS (5 %)</span>
-      <span class="fw-semibold"><%= eur(tps) %></span>
-    </div>
-
-    <div class="d-flex justify-content-between mb-2">
-      <span class="muted">TVQ (9.975 %)</span>
-      <span class="fw-semibold"><%= eur(tvq) %></span>
-    </div>
-
-    <div class="divider-soft my-3"></div>
-
-    <div class="d-flex justify-content-between">
-      <span class="fw-bold">Total</span>
-      <span class="fw-bold" style="color:#4039d4;"><%= eur(amount) %></span>
+    <div class="section-eyebrow">Informations</div>
+    <div class="row g-3 mt-1">
+      <div class="col-6 kv">
+        <div class="kv__lbl">Client</div>
+        <div class="kv__val text-truncate"><%= @invoice.company_name.presence || "—" %></div>
+      </div>
+      <div class="col-6 kv">
+        <div class="kv__lbl">N° de facture</div>
+        <div class="kv__val font-mono text-truncate"><%= @invoice.invoice_number.presence || "—" %></div>
+      </div>
+      <div class="col-6 kv">
+        <div class="kv__lbl">Catégorie</div>
+        <div class="kv__val text-truncate"><%= @invoice.category.presence || "—" %></div>
+      </div>
+      <div class="col-6 kv">
+        <div class="kv__lbl">Échéance</div>
+        <div class="kv__val font-mono"><%= @invoice.due_date ? short_date(@invoice.due_date) : "—" %></div>
+      </div>
+      <div class="col-12 kv">
+        <div class="kv__lbl">Créée le</div>
+        <div class="kv__val font-mono"><%= short_date(@invoice.created_at) %></div>
+      </div>
     </div>
   </div>
 
+  <%# Classeurs %>
   <% if @invoice.folders.any? %>
-    <div class="d-flex flex-wrap gap-2 section-gap">
-      <% @invoice.folders.each do |folder| %>
-        <span class="badge-status">
-          <i class="fa-solid fa-folder me-1"></i>
-          <%= folder.name %>
-        </span>
+    <div class="card-soft section-gap">
+      <div class="section-eyebrow">Classeurs</div>
+      <div class="d-flex flex-wrap gap-2 mt-1">
+        <% @invoice.folders.each do |folder| %>
+          <%= link_to folder_path(folder), class: "badge-status neutral text-decoration-none" do %>
+            <i class="fa-solid fa-folder me-1"></i><%= folder.name %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Rappels actifs %>
+  <% reminders = @invoice.reminders.to_a %>
+  <% if reminders.any? %>
+    <div class="card-soft section-gap">
+      <div class="section-eyebrow">Rappels</div>
+      <% reminders.each_with_index do |r, idx| %>
+        <div class="d-flex align-items-center gap-3 <%= 'mt-2' if idx > 0 %>">
+          <% pill_class = r.reminder_date && r.reminder_date < Date.today ? "date-pill--danger" : "" %>
+          <div class="date-pill <%= pill_class %>">
+            <div class="date-pill__day"><%= r.reminder_date&.day || "—" %></div>
+            <div class="date-pill__mo"><%= ApplicationHelper::FR_MONTHS_SHORT[r.reminder_date.month] if r.reminder_date %></div>
+          </div>
+          <div class="flex-fill">
+            <div class="fw-semibold" style="font-size:.86rem;">
+              <%= r.sent ? "Rappel envoyé" : "Rappel programmé" %>
+            </div>
+            <div class="faint" style="font-size:.76rem;font-weight:500;">
+              <%= short_date(r.reminder_date) %>
+            </div>
+          </div>
+          <%= button_to reminder_path(r), method: :delete,
+                class: "btn btn-sm",
+                style: "background:transparent;color:#94a3b8;",
+                data: { turbo_confirm: "Supprimer ce rappel ?" } do %>
+            <i class="fa-solid fa-xmark"></i>
+          <% end %>
+        </div>
       <% end %>
     </div>
   <% end %>
+
+  <%# OCR %>
   <% if @invoice.ocr_extracted_text.present? %>
     <div class="card-soft section-gap">
       <button class="btn w-100 d-flex align-items-center justify-content-between p-0"
@@ -105,23 +136,16 @@
               aria-expanded="false"
               aria-controls="ocrTextCollapse"
               style="border:none;background:transparent;">
-        <span class="section-title mb-0">Texte OCR brut</span>
-        <span class="badge-status">
-          <i class="fa-solid fa-eye me-1"></i>
-          Voir
-        </span>
+        <div class="text-start">
+          <div class="section-eyebrow mb-0">Texte OCR</div>
+          <div class="section-title mt-1">Voir le contenu extrait</div>
+        </div>
+        <i class="fa-solid fa-chevron-down faint"></i>
       </button>
 
       <div class="collapse mt-3" id="ocrTextCollapse">
-        <div style="
-          max-height:260px;
-          overflow:auto;
-          background:#f8f7ff;
-          border-radius:18px;
-          padding:16px;
-          border:1px solid #eceafe;
-        ">
-          <p class="faint mb-0" style="white-space:pre-wrap;font-size:.78rem;line-height:1.45;">
+        <div style="max-height:280px;overflow:auto;background:#f8f7ff;border-radius:16px;padding:16px;border:1px solid #eceafe;">
+          <p class="faint mb-0 font-mono" style="white-space:pre-wrap;font-size:.78rem;line-height:1.55;">
             <%= @invoice.ocr_extracted_text %>
           </p>
         </div>
@@ -129,44 +153,65 @@
     </div>
   <% end %>
 
+  <%# Supprimer %>
+  <button type="button"
+          class="btn btn-danger-soft w-100 section-gap"
+          data-bs-toggle="modal"
+          data-bs-target="#deleteInvoiceModal">
+    <i class="fa-solid fa-trash me-2"></i>Supprimer la facture
+  </button>
+</div>
 
-  <div class="section-gap">
-    <button type="button"
-            class="btn w-100 py-3"
-            data-bs-toggle="modal"
-            data-bs-target="#deleteInvoiceModal"
-            style="border:none;border-radius:20px;background:#fee2e2;color:#dc2626;font-weight:700;font-size:1rem;">
-      <i class="fa-solid fa-trash me-2"></i>
-      Supprimer la facture
-    </button>
+<%# Modale ajout rappel %>
+<div class="modal fade" id="addReminderModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered px-3">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div>
+            <div class="section-eyebrow mb-0">Rappel</div>
+            <h2 class="section-title mt-1">Nouveau rappel</h2>
+          </div>
+          <button type="button" class="sheet__close" data-bs-dismiss="modal" aria-label="Fermer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <%= form_with model: Reminder.new, url: reminders_path, data: { turbo: false } do |f| %>
+          <%= hidden_field_tag "reminder[invoice_id]", @invoice.id %>
+          <div class="mb-3">
+            <%= f.label :reminder_date, "Date du rappel", class: "form-label" %>
+            <%= f.date_field :reminder_date, class: "form-control", required: true %>
+          </div>
+          <%= f.submit "Créer le rappel", class: "btn btn-grad w-100" %>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>
 
+<%# Modale suppression %>
 <div class="modal fade" id="deleteInvoiceModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered px-3">
-    <div class="modal-content border-0" style="border-radius:28px;">
-      <div class="modal-body p-4 text-center">
+    <div class="modal-content">
+      <div class="modal-body text-center">
         <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-             style="width:72px;height:72px;border-radius:24px;background:#fee2e2;color:#dc2626;font-size:1.8rem;">
+             style="width:72px;height:72px;border-radius:22px;background:#fee2e2;color:#dc2626;font-size:1.8rem;">
           <i class="fa-solid fa-trash"></i>
         </div>
 
-        <h2 class="fw-bold mb-2" style="font-size:1.3rem;">Supprimer cette facture ?</h2>
-
-        <p class="text-muted mb-4" style="font-size:.92rem;">
-          Cette action est irréversible.
-        </p>
+        <h2 class="fw-bold mb-2" style="font-size:1.25rem;">Supprimer cette facture ?</h2>
+        <p class="muted mb-4" style="font-size:.88rem;">Cette action est irréversible.</p>
 
         <div class="d-grid gap-2">
           <%= button_to invoice_path(@invoice),
                 method: :delete,
                 class: "btn btn-danger btn-lg rounded-4 py-3",
                 data: { turbo: false } do %>
-            <i class="fa-solid fa-trash me-2"></i>
-            Oui, supprimer
+            <i class="fa-solid fa-trash me-2"></i>Oui, supprimer
           <% end %>
 
-          <button type="button" class="btn btn-light btn-lg rounded-4 py-3" data-bs-dismiss="modal">
+          <button type="button" class="btn btn-ghost rounded-4 py-3" data-bs-dismiss="modal">
             Annuler
           </button>
         </div>

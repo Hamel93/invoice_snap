@@ -1,5 +1,16 @@
-// Invoice Snap uses Inter (same as the Figma design system)
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+// Invoice Snap — typography (UUPM #59 Inter System + #31 Financial Trust)
+//   Body/UI/Display : Inter — single-family precision system
+//   Mono            : JetBrains Mono — limited to numeric data (amounts, invoice #, dates in pills)
+//
+// Hierarchy is built with weight + tracking, not multiple families.
+//   Display 28–40pt : Inter 700, letter-spacing -0.02em
+//   H1/H2 18–22pt   : Inter 700, letter-spacing -0.01em
+//   Body 14–16pt    : Inter 400/500
+//   Labels 10–12pt  : Inter 500/600 uppercase, letter-spacing 0.08em
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 $body-font:    "Inter", -apple-system, "Helvetica Neue", sans-serif;
 $headers-font: "Inter", -apple-system, "Helvetica Neue", sans-serif;
+$display-font: "Inter", -apple-system, "Helvetica Neue", sans-serif;
+// Mono alias kept for backward-compat in SCSS, but resolves to Inter (no monospace look).
+$mono-font:    "Inter", -apple-system, "Helvetica Neue", sans-serif;

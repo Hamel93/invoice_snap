@@ -1,4 +1,4 @@
-// Invoice Snap — color scheme (mirrors the Figma design system)
+// Invoice Snap — design tokens (UUPM #72 SaaS Boutique + brand violet preserved)
 
 // Brand
 $is-primary:     #4039d4;
@@ -8,25 +8,40 @@ $is-primary-lt:  #5b51e8;
 $is-lilac:       #c9c5fa;
 $is-lilac-bg:    #eceafe;
 
-// Surfaces & text
-$is-bg:          #f0f0f6;
-$is-surround:    #e6e6f0;
+// Surfaces & text — slate-tinted for boutique feel
+$is-bg:          #f4f4f9;   // canvas behind cards
+$is-surround:    #e9e9f0;   // outer body
 $is-white:       #ffffff;
-$is-ink:         #0a0a12;
-$is-ink-2:       #44445e;
-$is-muted:       #6b6b88;
-$is-faint:       #9494ae;
-$is-line:        #e0e0eb;
+$is-ink:         #0f172a;   // slate-900
+$is-ink-2:       #334155;   // slate-700
+$is-muted:       #64748b;   // slate-500
+$is-faint:       #94a3b8;   // slate-400
+$is-line:        #e2e8f0;   // slate-200
+$is-line-soft:   #f1f5f9;   // slate-100
 
-// Status
+// Status (kept stable for semantic continuity)
 $is-ok:          #16a34a;  $is-ok-bg:     #dcfce7;
 $is-warn:        #d97706;  $is-warn-bg:   #fef3c7;  $is-warn-bd: #fde68a;  $is-warn-ink: #92400e;
 $is-danger:      #dc2626;  $is-danger-bg: #fee2e2;
 
-// Brand gradient (purple headers / splash)
-$is-gradient: linear-gradient(160deg, #0d0a3e 0%, #2e26b8 55%, #4039d4 100%);
+// Brand gradient (purple headers / splash) — slight luminance boost
+$is-gradient: linear-gradient(160deg, #0d0a3e 0%, #2e26b8 50%, #4039d4 100%);
+$is-gradient-soft: linear-gradient(135deg, #4039d4 0%, #5b51e8 100%);
 
-// Legacy aliases kept for the template's partials
+// Elevation system (UUPM #72)
+$is-shadow-xs:   0 1px 2px rgba(15, 23, 42, .04);
+$is-shadow-sm:   0 2px 6px rgba(15, 23, 42, .05);
+$is-shadow-md:   0 4px 12px rgba(15, 23, 42, .06);
+$is-shadow-lg:   0 10px 28px rgba(15, 23, 42, .08);
+$is-shadow-brand: 0 8px 24px rgba(64, 57, 212, .28);
+
+// Radii
+$is-radius-sm: 10px;
+$is-radius-md: 14px;
+$is-radius-lg: 20px;
+$is-radius-xl: 28px;
+
+// Legacy aliases (kept for partials that may reference them)
 $blue:       $is-primary;
 $green:      $is-ok;
 $red:        $is-danger;

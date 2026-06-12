@@ -1,12 +1,14 @@
 <%# locals: reminder:, invoices: %>
 <%= form_with model: reminder, class: "card-soft" do |f| %>
   <% if reminder.errors.any? %>
-    <div class="alert alert-danger py-2" style="font-size:.82rem;"><%= reminder.errors.full_messages.first %></div>
+    <div class="alert alert-danger py-2" style="font-size:.82rem;border-radius:14px;">
+      <%= reminder.errors.full_messages.first %>
+    </div>
   <% end %>
   <div class="mb-3">
     <%= f.label :invoice_id, "Facture", class: "form-label" %>
     <%= f.select :invoice_id,
-          invoices.map { |i| ["#{i.company_name} · #{i.invoice_number}", i.id] },
+          invoices.map { |i| ["#{i.company_name.presence || 'Document'} · #{i.invoice_number.presence || '—'}", i.id] },
           { include_blank: "Choisir une facture" }, class: "form-select" %>
   </div>
   <div class="mb-3">
@@ -15,7 +17,7 @@
   </div>
   <div class="form-check mb-4">
     <%= f.check_box :sent, class: "form-check-input", id: "reminder_sent" %>
-    <label class="form-check-label" for="reminder_sent" style="font-size:.85rem;">Déjà envoyé</label>
+    <label class="form-check-label" for="reminder_sent">Déjà envoyé</label>
   </div>
   <%= f.submit (reminder.persisted? ? "Enregistrer" : "Créer le rappel"), class: "btn btn-grad w-100" %>
 <% end %>
