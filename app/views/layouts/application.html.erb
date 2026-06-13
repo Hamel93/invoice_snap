@@ -11,10 +11,6 @@
     <%= csp_meta_tag %>
     <%= yield :head %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <meta name="theme-color" content="#4039d4">
@@ -23,6 +19,8 @@
     <meta name="apple-mobile-web-app-title" content="Invoice Snap">
     <link rel="apple-touch-icon" href="<%= image_path 'icons/apple-icon-180x180.png' %>">
     <link rel="manifest" href="<%= asset_path 'manifest.json' %>">
+    <link rel="icon" type="image/png" sizes="32x32" href="<%= image_path 'icons/favicon-32x32.png' %>">
+    <link rel="icon" type="image/png" sizes="96x96" href="<%= image_path 'icons/favicon-96x96.png' %>">
 </head>
 
   <body>
