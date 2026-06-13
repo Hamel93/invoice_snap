@@ -1,15 +1,51 @@
 class InvoiceAutoClassifierService
   CATEGORY_KEYWORDS = {
-    "Facture" => ["facture", "invoice", "total", "montant", "paiement", "échéance", "due date"],
-    "Reçu" => ["reçu", "receipt", "transaction", "achat", "tps", "tvq", "tax", "débit", "visa", "mastercard"],
-    "Contrat" => ["contrat", "contract", "agreement", "signature", "conditions", "clause"],
-    "Devis" => ["devis", "quote", "estimation", "soumission", "proposal"]
+    "Épicerie" => [
+      "iga", "metro", "maxi", "provigo", "super c", "costco", "walmart",
+      "épicerie", "grocery", "alimentation", "supermarché"
+    ],
+    "Télécommunications" => [
+      "bell", "vidéotron", "videotron", "rogers", "telus", "fizz",
+      "internet", "mobile", "cellulaire", "téléphone", "telephone"
+    ],
+    "Hydro / Électricité" => [
+      "hydro-québec", "hydro quebec", "électricité", "electricite", "electricity"
+    ],
+    "Logement" => [
+      "loyer", "rent", "hypothèque", "hypotheque", "mortgage", "condo"
+    ],
+    "Transport / Auto" => [
+      "essence", "gas", "shell", "esso", "petro-canada", "ultramar",
+      "auto", "garage", "parking", "stationnement", "saaq"
+    ],
+    "Assurances" => [
+      "assurance", "insurance", "desjardins assurances", "belair", "intact"
+    ],
+    "Santé" => [
+      "pharmacie", "jean coutu", "familiprix", "uniprix", "dentiste",
+      "clinique", "médical", "medical", "santé"
+    ],
+    "Enfants / Famille" => [
+      "garderie", "daycare", "école", "ecole", "cpe", "enfant", "children"
+    ],
+    "Abonnements" => [
+      "netflix", "spotify", "amazon", "prime", "disney", "apple", "google",
+      "subscription", "abonnement"
+    ],
+    "Maison" => [
+      "canac", "rona", "home depot", "ikea", "meuble", "furniture", "outils"
+    ]
   }.freeze
 
   def initialize(invoice)
     @invoice = invoice
     @user = invoice.user
-    @text = invoice.ocr_extracted_text.to_s.downcase
+    @text = [
+      invoice.company_name,
+      invoice.invoice_number,
+      invoice.category,
+      invoice.ocr_extracted_text
+    ].compact.join(" ").downcase
   end
 
   def call
@@ -31,7 +67,6 @@ class InvoiceAutoClassifierService
   def assign_category_only
     @invoice.update(category: detect_category)
   end
-
 
   def assign_status
     return if @invoice.status.present? && @invoice.status != "pending"
@@ -69,6 +104,6 @@ class InvoiceAutoClassifierService
       return category if keywords.any? { |keyword| @text.include?(keyword) }
     end
 
-    "Facture"
+    "Autres"
   end
 end
