@@ -17,6 +17,8 @@
   background: #f3f4f6;
 
   scroll-behavior: smooth;
+
+  padding: 1.5rem !important;
 }
 
 .chat-footer {
@@ -41,10 +43,13 @@
   border-radius: 18px !important;
 
   box-shadow: 0 4px 12px rgba(91, 95, 246, 0.15);
+
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .assistant-message {
-  max-width: 85%;
+  max-width: 92%;
 
   background: white;
 
@@ -52,7 +57,9 @@
 
   border: none;
 
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+
+  padding: 1.1rem 1.25rem !important;
 }
 
 .assistant-avatar {
@@ -68,11 +75,64 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
+}
+
+.assistant-content {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: #1f2937;
+}
+
+.assistant-content p {
+  margin-bottom: 0.9rem;
+}
+
+.assistant-content ul {
+  margin-bottom: 1rem;
+  padding-left: 1.25rem;
+}
+
+.assistant-content li {
+  margin-bottom: 0.35rem;
+}
+
+.assistant-content h1,
+.assistant-content h2,
+.assistant-content h3,
+.assistant-content h4 {
+  font-weight: 700;
+  color: #111827;
+}
+
+.assistant-content h1 {
+  font-size: 1.2rem;
+  margin-bottom: 0.9rem;
+}
+
+.assistant-content h2 {
+  font-size: 1.05rem;
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.assistant-content h3 {
+  font-size: 1rem;
+  margin-top: 0.9rem;
+  margin-bottom: 0.6rem;
+}
+
+.assistant-content strong {
+  font-weight: 600;
 }
 
 .chat-input {
   border: 1px solid #dcdcdc;
+
   min-height: 60px;
+
+  font-size: 0.95rem;
 }
 
 .chat-input:focus {
@@ -82,25 +142,29 @@
 
 .chat-suggestions {
   display: flex;
+
   gap: 8px;
+
   flex-wrap: wrap;
 }
 
 .suggestion-btn {
   border: 1px solid #e5e7eb;
+
   background: white;
 
   border-radius: 999px;
 
   padding: 8px 14px;
 
-  font-size: 14px;
+  font-size: 13px;
 
   transition: all 0.2s ease;
 }
 
 .suggestion-btn:hover {
   background: #f7f7f8;
+
   transform: translateY(-1px);
 }
 
