@@ -44,7 +44,7 @@ module ApplicationHelper
     return "—" if amount.nil?
 
     whole = amount.to_d == amount.to_d.to_i
-    number_to_currency(amount, unit: "$", format: "%n %u", separator: ",",
+    number_to_currency(amount, unit: "$", format: "%u%n", separator: ",",
                                delimiter: " ", precision: whole ? 0 : 2)
   end
 
