@@ -158,6 +158,16 @@ class MessagesController < ApplicationController
       chat: @chat
     )
 
+    unless ENV["OPENAI_API_KEY"].present?
+      Message.create!(
+        chat: @chat,
+        role: "assistant",
+        content: "L'assistant IA est désactivé en local. Il fonctionne seulement en production avec la clé OpenAI configurée sur Heroku."
+      )
+      redirect_to chat_path(@chat)
+      return
+    end
+
     ruby_llm_chat = RubyLLM.chat(model: "gpt-4o-mini")
                            .with_instructions(SYSTEM_PROMPT)
                            .with_tools(*LlmTools::Registry.all_for(current_user))

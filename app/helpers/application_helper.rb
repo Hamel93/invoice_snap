@@ -30,7 +30,16 @@ module ApplicationHelper
     status_meta(status).last
   end
 
-  # Deterministic avatar tint based on a name ("" = default lilac/primary).
+  def eur(amount)
+  number_to_currency(
+    amount || 0,
+    unit: "$",
+    separator: ".",
+    delimiter: " ",
+    format: "%u%n",
+    precision: 2
+  )
+end# Deterministic avatar tint based on a name ("" = default lilac/primary).
   def avatar_color_for(text)
     %w[default ok warn danger neutral][text.to_s.bytes.sum % 5].sub("default", "")
   end
@@ -41,12 +50,16 @@ module ApplicationHelper
 
   # 2 400 $  /  2 400,50 $
   def eur(amount)
-    return "—" if amount.nil?
+  number_to_currency(
+    amount || 0,
+    unit: "$",
+    separator: ".",
+    delimiter: " ",
+    format: "%u%n",
+    precision: 2
+  )
+end
 
-    whole = amount.to_d == amount.to_d.to_i
-    number_to_currency(amount, unit: "$", format: "%u%n", separator: ",",
-                               delimiter: " ", precision: whole ? 0 : 2)
-  end
 
   # "Lundi 19 mai 2025"
   def fr_date(date = Date.today)
@@ -89,3 +102,4 @@ module ApplicationHelper
     STATUS_MAP[status.to_s.downcase] || ["neutral", status.to_s.titleize.presence || "—"]
   end
 end
+
