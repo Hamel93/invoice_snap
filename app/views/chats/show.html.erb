@@ -1,32 +1,15 @@
 <div class="container py-4">
 
-  <div class="app-header app-header--rounded mb-4">
+  <div class="mb-3">
 
-    <div class="d-flex justify-content-between align-items-start">
+    <%= link_to chats_path,
+                class: "btn btn-light rounded-circle shadow-sm" do %>
 
-      <div>
+      <i class="fa-solid fa-arrow-left"></i>
 
-        <h1 class="fw-bold text-white mb-2">
-          AI Assistant 🤖
-        </h1>
-
-        <p class="text-white-50 mb-0">
-          Analysez vos factures et obtenez des conseils personnalisés.
-        </p>
-
-      </div>
-
-      <%= link_to chats_path,
-                  class: "app-header__avatar text-decoration-none" do %>
-
-        ←
-
-      <% end %>
-
-    </div>
+    <% end %>
 
   </div>
-
 
   <div class="card border-0 shadow-sm rounded-4 p-3 mb-3">
 
@@ -79,12 +62,11 @@
 
   </div>
 
-
   <div class="chat-wrapper bg-white shadow-sm rounded-4 border overflow-hidden">
 
     <div id="messages" class="messages-container p-4">
 
-      <% @chat.messages.each do |message| %>
+      <% @chat.messages.order(created_at: :asc).each do |message| %>
 
         <% if message.role == "user" %>
 
@@ -112,21 +94,21 @@
 
                 <div>
 
-                    <strong>
-                      Invoice AI
-                    </strong>
+                  <strong>
+                    Invoice AI
+                  </strong>
 
-                    <div class="small text-muted">
-                      <%= message.created_at.strftime("%H:%M") %>
-                    </div>
-
+                  <div class="small text-muted">
+                    <%= message.created_at.in_time_zone("America/Toronto").strftime("%H:%M") %>
                   </div>
+
+                </div>
 
               </div>
 
               <div class="assistant-content">
 
-                <%= simple_format(message.content) %>
+                <%= markdown(message.content) %>
 
               </div>
 
@@ -139,7 +121,6 @@
       <% end %>
 
     </div>
-
 
     <div class="chat-footer p-3">
 
@@ -178,7 +159,6 @@
         </button>
 
       </div>
-
 
       <%= simple_form_for [@chat, @message],
                           html: { id: "chat-form" } do |f| %>
