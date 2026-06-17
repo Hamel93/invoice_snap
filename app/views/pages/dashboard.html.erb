@@ -67,6 +67,26 @@
     </div>
   <% end %>
 
+  <div class="cta-row section-gap">
+    <%= link_to camera_invoices_path, class: "cta-row__btn cta-row__btn--primary", "aria-label": "Scanner une facture" do %>
+      <div class="cta-row__btn__chip"><i class="fa-solid fa-camera"></i></div>
+      <div class="cta-row__btn__arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="cta-row__btn__body">
+        <div class="cta-row__btn__lbl">Nouveau</div>
+        <div class="cta-row__btn__title">Scanner<br>une facture</div>
+      </div>
+    <% end %>
+
+    <%= link_to chats_path, class: "cta-row__btn cta-row__btn--ai", "aria-label": "Ouvrir l'assistant IA" do %>
+      <div class="cta-row__btn__chip"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+      <div class="cta-row__btn__arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="cta-row__btn__body">
+        <div class="cta-row__btn__lbl">Assistant</div>
+        <div class="cta-row__btn__title">Demander<br>à l'IA</div>
+      </div>
+    <% end %>
+  </div>
+
   <div class="d-flex justify-content-between align-items-center section-gap mb-2">
     <div>
       <div class="section-eyebrow">Raccourcis</div>
@@ -75,13 +95,6 @@
   </div>
 
   <div class="bento">
-    <%= link_to camera_invoices_path, class: "bento__tile bento__tile--span2 bento__tile--primary bento__tile--tall" do %>
-      <div class="bento__tile__icon"><i class="fa-solid fa-camera"></i></div>
-      <div class="bento__tile__lbl">Nouveau</div>
-      <div class="bento__tile__num" style="font-size:1.4rem;">Scanner<br>une facture</div>
-      <div class="bento__tile__sub" style="margin-top:4px;">OCR automatique</div>
-    <% end %>
-
     <%= link_to invoices_path, class: "bento__tile bento__tile--span2" do %>
       <div class="bento__tile__icon" style="background:#fef3c7;color:#d97706;"><i class="fa-regular fa-folder-open"></i></div>
       <div class="bento__tile__lbl">En attente</div>
@@ -96,10 +109,11 @@
       <div class="bento__tile__sub">à venir</div>
     <% end %>
 
-    <%= link_to chats_path, class: "bento__tile bento__tile--span2" do %>
-      <div class="bento__tile__icon" style="background:#dcfce7;color:#16a34a;"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-      <div class="bento__tile__lbl">Assistant IA</div>
-      <div class="bento__tile__num" style="font-size:1.2rem;">Analyser<br>mes dépenses</div>
+    <%= link_to new_invoice_path, class: "bento__tile bento__tile--span2" do %>
+      <div class="bento__tile__icon" style="background:#e0f2fe;color:#0284c7;"><i class="fa-solid fa-file-circle-plus"></i></div>
+      <div class="bento__tile__lbl">Manuel</div>
+      <div class="bento__tile__num" style="font-size:1.2rem;">Nouvelle<br>facture</div>
+      <div class="bento__tile__sub" style="margin-top:4px;">saisie rapide</div>
     <% end %>
 
     <%= link_to folders_path, class: "bento__tile bento__tile--span2" do %>

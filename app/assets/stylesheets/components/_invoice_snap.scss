@@ -272,6 +272,82 @@ html, body { background: $is-surround; font-family: $body-font; color: $is-ink; 
 .kpi__num  { font-family: $body-font; font-size:1.35rem; font-weight: 700; color:$is-ink; letter-spacing: -.02em; }
 .kpi__lbl  { font-family: $body-font; font-size:.64rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color:$is-muted; margin-top: 2px; }
 
+// ---- CTA row (Scanner + Assistant IA on dashboard) -----------------
+// UUPM rules applied: touch target >=48dp, primary-action, state-clarity,
+// press-feedback, duration 150-300ms, gradient for primary, semantic tokens.
+.cta-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+.cta-row__btn {
+  position: relative;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 116px;
+  padding: 16px;
+  border-radius: $is-radius-lg;
+  border: 1px solid $is-line-soft;
+  background: $is-white;
+  box-shadow: $is-shadow-sm;
+  text-decoration: none; color: $is-ink;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+
+  &:hover  { transform: translateY(-2px); box-shadow: $is-shadow-md; color: $is-ink; text-decoration: none; }
+  &:active { transform: translateY(0); box-shadow: $is-shadow-sm; transition-duration: .08s; }
+  &:focus-visible { outline: 3px solid rgba(64,57,212,.35); outline-offset: 2px; }
+}
+.cta-row__btn__chip {
+  width: 44px; height: 44px; border-radius: 13px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+  background: $is-lilac-bg; color: $is-primary;
+}
+.cta-row__btn__body { display: flex; flex-direction: column; gap: 4px; }
+.cta-row__btn__lbl {
+  font-size: .62rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: inherit; opacity: .65; line-height: 1;
+}
+.cta-row__btn__title {
+  font-size: 1rem; font-weight: 700;
+  line-height: 1.2; letter-spacing: -.01em;
+  color: inherit;
+}
+.cta-row__btn__arrow {
+  position: absolute; right: 14px; top: 18px;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(13,10,62,.06); color: $is-ink;
+  font-size: .72rem;
+  transition: transform .18s ease, background-color .18s ease;
+}
+.cta-row__btn:hover .cta-row__btn__arrow { transform: translateX(2px); }
+
+// Primary — Scanner (brand gradient, white)
+.cta-row__btn--primary {
+  background: $is-gradient-soft; color: $is-white; border-color: transparent;
+  box-shadow: $is-shadow-brand;
+  &::after {
+    content: ""; position: absolute;
+    width: 140px; height: 140px; right: -50px; bottom: -60px;
+    background: radial-gradient(circle, rgba(255,255,255,.22), transparent 70%);
+    pointer-events: none;
+  }
+  .cta-row__btn__chip  { background: rgba(255,255,255,.2); color: $is-white; }
+  .cta-row__btn__arrow { background: rgba(255,255,255,.18); color: $is-white; }
+  &:hover { color: $is-white; box-shadow: 0 14px 32px rgba(64,57,212,.4); }
+}
+
+// AI — green accent
+.cta-row__btn--ai {
+  .cta-row__btn__chip  { background: #dcfce7; color: #16a34a; }
+}
+
 // ---- Quick action buttons (homescreen tiles) -----------------------
 .quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
 .quick__btn {
@@ -747,9 +823,28 @@ html, body { background: $is-surround; font-family: $body-font; color: $is-ink; 
 }
 button.action-tile { font-family: inherit; }
 
+// ---- Chat back button (inline in title card) -----------------------
+.chat-back-btn {
+  flex-shrink: 0;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: $is-lilac-bg; color: $is-primary;
+  border: 1px solid transparent;
+  text-decoration: none;
+  font-size: .95rem;
+  transition: background-color .15s ease, transform .15s ease, color .15s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover  { background: darken($is-lilac-bg, 3%); color: $is-primary; text-decoration: none; }
+  &:active { transform: scale(.94); transition-duration: .08s; }
+  &:focus-visible { outline: 3px solid rgba(64,57,212,.35); outline-offset: 2px; }
+}
+
 // ---- Misc ----------------------------------------------------------
 .divider-line { height: 1px; background: $is-line; }
 .timeline-line { width: 2px; background: $is-line; }
+.min-w-0 { min-width: 0; }
 
 // Hide nav on immersive screens
 .no-nav { padding-bottom: 0 !important; }
