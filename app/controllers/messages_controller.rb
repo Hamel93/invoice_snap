@@ -103,13 +103,50 @@ class MessagesController < ApplicationController
 
       Be concise, practical and business-oriented.
 
-      Use bullet points when appropriate.
+      Always answer using Markdown.
 
-      Explain your reasoning clearly.
+      IMPORTANT FORMATTING RULES
 
-      Prioritize actionable insights over generic advice.
+      - Use Markdown headings with ##.
+      - Use bullet lists whenever possible.
+      - Use relevant emojis.
+      - Leave blank lines between sections.
+      - Keep paragraphs short.
+      - Avoid large walls of text.
+      - Highlight key findings.
+      - Prioritize actionable insights over generic advice.
 
-      Answer in Markdown.
+      PREFERRED RESPONSE STRUCTURE
+
+      ## 💰 Summary
+
+      Provide a short summary of the situation.
+
+      ## 📊 Analysis
+
+      Present the most important findings.
+
+      ## ⚠️ Attention Points
+
+      Highlight unusual expenses, recurring subscriptions, risks or important observations.
+
+      ## 💡 Recommendation
+
+      Provide practical and actionable recommendations.
+
+      When discussing tax deductibility, add:
+
+      ## 🧾 Tax Analysis
+
+      Explain why the expense may or may not qualify as deductible.
+
+      When relevant, include a confidence level:
+
+      - 🟢 High confidence
+      - 🟡 Medium confidence
+      - 🔴 Low confidence
+
+      The response should look professional, mobile-friendly and easy to scan quickly.
   PROMPT
 
   def create
@@ -120,6 +157,16 @@ class MessagesController < ApplicationController
       role: "user",
       chat: @chat
     )
+
+    unless ENV["OPENAI_API_KEY"].present?
+      Message.create!(
+        chat: @chat,
+        role: "assistant",
+        content: "L'assistant IA est désactivé en local. Il fonctionne seulement en production avec la clé OpenAI configurée sur Heroku."
+      )
+      redirect_to chat_path(@chat)
+      return
+    end
 
     ruby_llm_chat = RubyLLM.chat(model: "gpt-4o-mini")
                            .with_instructions(SYSTEM_PROMPT)

@@ -1,5 +1,21 @@
 <% content_for :title, @folder.name %>
 
+<% selected_category = params[:category].presence || "Tout" %>
+<% categories = @invoices.map { |invoice| invoice.category.presence || "Autres" }.uniq.sort %>
+
+<% filtered_invoices =
+  if selected_category == "Tout"
+    @invoices
+  else
+    @invoices.select { |invoice| (invoice.category.presence || "Autres") == selected_category }
+  end
+%>
+
+<% total_amount = @invoices.sum { |invoice| invoice.amount.to_f } %>
+<% selected_amount = filtered_invoices.sum { |invoice| invoice.amount.to_f } %>
+<% paid_amount = @invoices.select { |invoice| invoice.status == "paid" }.sum { |invoice| invoice.amount.to_f } %>
+<% pending_amount = @invoices.select { |invoice| invoice.status == "pending" }.sum { |invoice| invoice.amount.to_f } %>
+
 <header class="app-header app-header--rounded">
   <div class="app-header__bar">
     <%= link_to folders_path, class: "app-header__back" do %><i class="fa-solid fa-chevron-left"></i><% end %>
@@ -9,19 +25,53 @@
       <i class="fa-solid fa-pen"></i>
     <% end %>
   </div>
-  <p class="app-header__sub"><%= pluralize(@invoices.count, "document") %></p>
+  <p class="app-header__sub"><%= pluralize(@invoices.count, "document") %> · <%= eur(total_amount) %></p>
 </header>
 
 <div class="app-pad" style="margin-top:18px;">
-  <% if @invoices.any? %>
-    <% @invoices.each do |invoice| %>
+  <div class="folder-summary">
+    <div>
+      <span>Total</span>
+      <strong><%= eur(total_amount) %></strong>
+    </div>
+    <div>
+      <span>Payé</span>
+      <strong><%= eur(paid_amount) %></strong>
+    </div>
+    <div>
+      <span>À payer</span>
+      <strong><%= eur(pending_amount) %></strong>
+    </div>
+  </div>
+
+  <% if categories.any? %>
+    <div class="folder-category-tabs">
+      <%= link_to "Tout",
+            folder_path(@folder),
+            class: "folder-category-tab #{'is-active' if selected_category == 'Tout'}" %>
+
+      <% categories.each do |category| %>
+        <%= link_to category,
+              folder_path(@folder, category: category),
+              class: "folder-category-tab #{'is-active' if selected_category == category}" %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if filtered_invoices.any? %>
+    <div class="folder-section-title">
+      <span><%= selected_category %></span>
+      <span><%= eur(selected_amount) %></span>
+    </div>
+
+    <% filtered_invoices.each do |invoice| %>
       <%= render "shared/invoice_row", invoice: invoice %>
     <% end %>
   <% else %>
     <div class="empty-state card-soft">
       <i class="fa-regular fa-folder-open d-block"></i>
-      <div class="empty-state__title">Classeur vide</div>
-      <div class="empty-state__sub">Ajoutez ce classeur depuis une facture (Modifier → Classeurs).</div>
+      <div class="empty-state__title">Aucun document</div>
+      <div class="empty-state__sub">Aucun document dans cette catégorie.</div>
     </div>
   <% end %>
 

@@ -1,13 +1,13 @@
 module ApplicationHelper
   # status key => [css modifier, French label]
   STATUS_MAP = {
-    "paid"     => ["paid",    "Payée"],
-    "payee"    => ["paid",    "Payée"],
-    "pending"  => ["pending", "En attente"],
-    "overdue"  => ["overdue", "En retard"],
-    "signed"   => ["neutral", "Signé"],
-    "accepted" => ["paid",    "Accepté"],
-    "draft"    => ["neutral", "Brouillon"],
+    "paid" => ["paid", "Payée"],
+    "payee" => ["paid", "Payée"],
+    "pending" => ["pending", "En attente"],
+    "overdue" => ["overdue", "En retard"],
+    "signed" => ["neutral", "Signé"],
+    "accepted" => ["paid", "Accepté"],
+    "draft" => ["neutral", "Brouillon"],
     "archived" => ["neutral", "Archivée"]
   }.freeze
 
@@ -30,7 +30,16 @@ module ApplicationHelper
     status_meta(status).last
   end
 
-  # Deterministic avatar tint based on a name ("" = default lilac/primary).
+  def eur(amount)
+  number_to_currency(
+    amount || 0,
+    unit: "$",
+    separator: ".",
+    delimiter: " ",
+    format: "%u%n",
+    precision: 2
+  )
+end# Deterministic avatar tint based on a name ("" = default lilac/primary).
   def avatar_color_for(text)
     %w[default ok warn danger neutral][text.to_s.bytes.sum % 5].sub("default", "")
   end
@@ -41,11 +50,16 @@ module ApplicationHelper
 
   # 2 400 $  /  2 400,50 $
   def eur(amount)
-    return "—" if amount.nil?
-    whole = amount.to_d == amount.to_d.to_i
-    number_to_currency(amount, unit: "$", format: "%n %u", separator: ",",
-                       delimiter: " ", precision: whole ? 0 : 2)
-  end
+  number_to_currency(
+    amount || 0,
+    unit: "$",
+    separator: ".",
+    delimiter: " ",
+    format: "%u%n",
+    precision: 2
+  )
+end
+
 
   # "Lundi 19 mai 2025"
   def fr_date(date = Date.today)
@@ -56,8 +70,30 @@ module ApplicationHelper
   # "19 mai"
   def short_date(date)
     return "—" if date.blank?
+
     d = date.to_date
     "#{d.day} #{FR_MONTHS_SHORT[d.month]}"
+  end
+
+  def short_date(date)
+    return "—" if date.blank?
+
+    d = date.to_date
+    "#{d.day} #{FR_MONTHS_SHORT[d.month]}"
+  end
+
+  def markdown(text)
+    renderer = Redcarpet::Render::HTML.new(
+      hard_wrap: true
+    )
+
+    markdown = Redcarpet::Markdown.new(
+      renderer,
+      tables: true,
+      fenced_code_blocks: true
+    )
+
+    markdown.render(text).html_safe
   end
 
   private
@@ -66,3 +102,4 @@ module ApplicationHelper
     STATUS_MAP[status.to_s.downcase] || ["neutral", status.to_s.titleize.presence || "—"]
   end
 end
+
