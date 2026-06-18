@@ -194,8 +194,9 @@ html, body { background: $is-surround; font-family: $body-font; color: $is-ink; 
   & + & { border-left: 1px solid $is-line; padding-left: 14px; } }
 .stat-strip__num {
   font-family: $mono-font; font-variant-numeric: tabular-nums;
-  font-size: 1.3rem; font-weight: 600;
+  font-size: clamp(1rem, 4.2vw, 1.3rem); font-weight: 600;
   color: $is-ink; line-height: 1.1; letter-spacing: -.02em;
+  white-space: nowrap;
 }
 .stat-strip__lbl {
   font-family: $body-font; font-size: .64rem; font-weight: 600;

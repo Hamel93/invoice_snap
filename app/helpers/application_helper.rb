@@ -48,17 +48,17 @@ end# Deterministic avatar tint based on a name ("" = default lilac/primary).
     text.to_s.strip[0, 1].to_s.upcase.presence || "?"
   end
 
-  # 2 400 $  /  2 400,50 $
+  # 2 400 $  /  2 400,50 $  (non-breaking spaces so the amount never wraps)
   def eur(amount)
-  number_to_currency(
-    amount || 0,
-    unit: "$",
-    separator: ".",
-    delimiter: " ",
-    format: "%u%n",
-    precision: 2
-  )
-end
+    number_to_currency(
+      amount || 0,
+      unit: "$",
+      separator: ",",
+      delimiter: " ",
+      format: "%n %u",
+      precision: 2
+    )
+  end
 
 
   # "Lundi 19 mai 2025"
