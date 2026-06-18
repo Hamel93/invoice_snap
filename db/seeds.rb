@@ -11,44 +11,202 @@ user.save!
 
 # Reset previous demo data so the seed stays idempotent.
 user.invoices.destroy_all
-FOLDER_NAMES = ["Factures", "Reçus", "Contrats", "Devis", "Archive 2024"].freeze
-Folder.where(name: FOLDER_NAMES).destroy_all
+user.folders.destroy_all
 
-folders = FOLDER_NAMES.index_with { |name| Folder.create!(name: name) }
+TODAY = Date.new(2026, 6, 18)
 
-invoices = [
-  { company: "TechStartup SAS",     number: "FA-0125", amount: 1200, status: "pending",  category: "Prestation de service", folder: "Factures", created_ago: 2,   due_in: 18,  remind_in: 18 },
-  { company: "TechStartup SAS",     number: "FA-0124", amount: 2400, status: "pending",  category: "Prestation de service", folder: "Factures", created_ago: 8,   due_in: 12,  remind_in: 12 },
-  { company: "Design Studio Paris", number: "FA-0123", amount: 850,  status: "paid",     category: "Design",                folder: "Factures", created_ago: 14,  due_in: -2 },
-  { company: "Agence Créative",     number: "FA-0122", amount: 3200, status: "overdue",  category: "Conseil",               folder: "Factures", created_ago: 22,  due_in: -9,  remind_in: -3 },
-  { company: "Studio Lumière",      number: "FA-0121", amount: 1500, status: "paid",     category: "Photographie",          folder: "Factures", created_ago: 38 },
-  { company: "Carrefour Pro",       number: "REC-0044", amount: 84,  status: "paid",     category: "Fournitures",           folder: "Reçus",    created_ago: 16 },
-  { company: "SNCF",                number: "REC-0043", amount: 124, status: "paid",     category: "Déplacement",           folder: "Reçus",    created_ago: 44 },
-  { company: "TechStartup SAS",     number: "DEV-0042", amount: 3500, status: "accepted", category: "Devis",                folder: "Devis",    created_ago: 30,  remind_in: 6 },
-  { company: "TechStartup SAS",     number: "CT-2025",  amount: 0,    status: "signed",   category: "Contrat",              folder: "Contrats", created_ago: 70 },
-  { company: "Freelance Network",   number: "FA-0120", amount: 980,  status: "paid",     category: "Prestation de service", folder: "Factures", created_ago: 62 },
-  { company: "Agence Créative",     number: "FA-0119", amount: 1800, status: "paid",     category: "Conseil",               folder: "Archive 2024", created_ago: 96 },
-  { company: "Design Studio Paris", number: "FA-0118", amount: 1450, status: "paid",     category: "Design",                folder: "Archive 2024", created_ago: 120 }
-]
+YEAR_FOLDERS = [2023, 2024, 2025, 2026].freeze
+year_folders = YEAR_FOLDERS.index_with { |y| user.folders.create!(name: y.to_s) }
 
-invoices.each do |d|
+# Recurring monthly bills used to fill each past year with realistic history.
+RECURRING = [
+  { company: "Hydro-Québec",          category: "Hydro / Électricité", amount: 142.50, day: 5  },
+  { company: "Bell Canada",           category: "Télécommunications",  amount: 89.99,  day: 8  },
+  { company: "Vidéotron",             category: "Télécommunications",  amount: 64.95,  day: 12 },
+  { company: "Loyer Immobilier",      category: "Logement",            amount: 1450.00, day: 1 },
+  { company: "Netflix",               category: "Abonnements",         amount: 16.99,  day: 14 },
+  { company: "Spotify",               category: "Abonnements",         amount: 10.99,  day: 20 },
+  { company: "Desjardins Assurances", category: "Assurances",          amount: 78.40,  day: 22 },
+  { company: "CPE Les Petits Loups",  category: "Enfants / Famille",   amount: 215.00, day: 3  }
+].freeze
+
+# Occasional purchases spread across the year (month → entries).
+OCCASIONAL = {
+   2 => [ { company: "Costco",        category: "Épicerie",         amount: 312.45 },
+          { company: "Shell",         category: "Transport / Auto", amount: 68.20  } ],
+   4 => [ { company: "Jean Coutu",    category: "Santé",            amount: 42.85  },
+          { company: "IGA",           category: "Épicerie",         amount: 184.30 } ],
+   6 => [ { company: "RONA",          category: "Maison",           amount: 256.75 } ],
+   8 => [ { company: "Esso",          category: "Transport / Auto", amount: 71.40  },
+          { company: "Metro",         category: "Épicerie",         amount: 142.18 } ],
+  10 => [ { company: "Canac",         category: "Maison",           amount: 489.00 },
+          { company: "Familiprix",    category: "Santé",            amount: 28.50  } ],
+  12 => [ { company: "IKEA",          category: "Maison",           amount: 612.30 },
+          { company: "Amazon Prime",  category: "Abonnements",      amount: 79.99  } ]
+}.freeze
+
+invoice_counter = 0
+build = ->(company:, category:, amount:, issued_on:, due_on:, status:, folder:, remind_on: nil) do
+  invoice_counter += 1
   invoice = user.invoices.create!(
-    company_name:       d[:company],
-    invoice_number:     d[:number],
-    amount:             d[:amount],
-    status:             d[:status],
-    category:           d[:category],
-    due_date:           (d[:due_in] ? Date.today + d[:due_in] : nil),
-    ocr_extracted_text: "#{d[:company]} — #{d[:number]} — #{d[:amount]} € TTC",
-    created_at:         d[:created_ago].days.ago
+    company_name:       company,
+    invoice_number:     "FA-#{issued_on.year}-#{format('%04d', invoice_counter)}",
+    amount:             amount,
+    status:             status,
+    category:           category,
+    due_date:           due_on,
+    ocr_extracted_text: "#{company} — #{format('%.2f', amount)} $ CAD — émise le #{issued_on.strftime('%d/%m/%Y')}",
+    created_at:         issued_on.to_time
   )
+  FolderInvoice.create!(invoice: invoice, folder: folder)
+  Reminder.create!(invoice: invoice, reminder_date: remind_on, sent: remind_on < TODAY) if remind_on
+  invoice
+end
 
-  FolderInvoice.create!(user: user, invoice: invoice, folder: folders[d[:folder]])
+# ---- Past years: fully paid history (2023, 2024, 2025) ----
+[2023, 2024, 2025].each do |year|
+  folder = year_folders[year]
 
-  if d[:remind_in]
-    Reminder.create!(invoice: invoice, reminder_date: Date.today + d[:remind_in], sent: d[:remind_in].negative?)
+  (1..12).each do |month|
+    RECURRING.each do |bill|
+      issued_on = Date.new(year, month, bill[:day])
+      due_on    = issued_on + 14
+      build.call(
+        company:   bill[:company],
+        category:  bill[:category],
+        amount:    bill[:amount],
+        issued_on: issued_on,
+        due_on:    due_on,
+        status:    "paid",
+        folder:    folder
+      )
+    end
+
+    Array(OCCASIONAL[month]).each do |entry|
+      issued_on = Date.new(year, month, 15)
+      build.call(
+        company:   entry[:company],
+        category:  entry[:category],
+        amount:    entry[:amount],
+        issued_on: issued_on,
+        due_on:    issued_on + 7,
+        status:    "paid",
+        folder:    folder
+      )
+    end
   end
 end
 
-puts "✓ #{user.invoices.count} factures, #{folders.size} classeurs, #{Reminder.joins(:invoice).where(invoices: { user_id: user.id }).count} rappels"
+# ---- 2026: current year — paid + pending + overdue ----
+folder_2026 = year_folders[2026]
+
+# January → May 2026: recurring monthly bills already paid.
+(1..5).each do |month|
+  RECURRING.each do |bill|
+    issued_on = Date.new(2026, month, bill[:day])
+    due_on    = issued_on + 14
+    build.call(
+      company:   bill[:company],
+      category:  bill[:category],
+      amount:    bill[:amount],
+      issued_on: issued_on,
+      due_on:    due_on,
+      status:    "paid",
+      folder:    folder_2026
+    )
+  end
+
+  Array(OCCASIONAL[month]).each do |entry|
+    issued_on = Date.new(2026, month, 15)
+    build.call(
+      company:   entry[:company],
+      category:  entry[:category],
+      amount:    entry[:amount],
+      issued_on: issued_on,
+      due_on:    issued_on + 7,
+      status:    "paid",
+      folder:    folder_2026
+    )
+  end
+end
+
+# June 2026 (en cours) : Loyer + premières charges déjà payées.
+[
+  { company: "Loyer Immobilier",      category: "Logement",            amount: 1450.00, day: 1  },
+  { company: "Hydro-Québec",          category: "Hydro / Électricité", amount: 138.20,  day: 5  },
+  { company: "Bell Canada",           category: "Télécommunications",  amount: 89.99,   day: 8  }
+].each do |bill|
+  issued_on = Date.new(2026, 6, bill[:day])
+  build.call(
+    company:   bill[:company],
+    category:  bill[:category],
+    amount:    bill[:amount],
+    issued_on: issued_on,
+    due_on:    issued_on + 10,
+    status:    "paid",
+    folder:    folder_2026
+  )
+end
+
+# ---- Factures à payer prochainement (status: pending, due_date dans le futur) ----
+upcoming = [
+  { company: "Vidéotron",             category: "Télécommunications",  amount: 64.95,   issued: Date.new(2026, 6, 12), due: Date.new(2026, 6, 22) },
+  { company: "Netflix",               category: "Abonnements",         amount: 16.99,   issued: Date.new(2026, 6, 14), due: Date.new(2026, 6, 24) },
+  { company: "Spotify",               category: "Abonnements",         amount: 10.99,   issued: Date.new(2026, 6, 15), due: Date.new(2026, 6, 25) },
+  { company: "Desjardins Assurances", category: "Assurances",          amount: 78.40,   issued: Date.new(2026, 6, 10), due: Date.new(2026, 6, 28) },
+  { company: "SAAQ",                  category: "Transport / Auto",    amount: 348.00,  issued: Date.new(2026, 6, 1),  due: Date.new(2026, 6, 30) },
+  { company: "CPE Les Petits Loups",  category: "Enfants / Famille",   amount: 215.00,  issued: Date.new(2026, 6, 17), due: Date.new(2026, 7, 3)  },
+  { company: "RONA",                  category: "Maison",              amount: 421.65,  issued: Date.new(2026, 6, 16), due: Date.new(2026, 7, 5)  },
+  { company: "Jean Coutu",            category: "Santé",               amount: 56.30,   issued: Date.new(2026, 6, 13), due: Date.new(2026, 7, 8)  },
+  { company: "Clinique Dentaire Plateau", category: "Santé",           amount: 285.00,  issued: Date.new(2026, 6, 11), due: Date.new(2026, 7, 11) },
+  { company: "Hydro-Québec",          category: "Hydro / Électricité", amount: 156.40,  issued: Date.new(2026, 6, 18), due: Date.new(2026, 7, 18) }
+]
+
+upcoming.each do |entry|
+  build.call(
+    company:   entry[:company],
+    category:  entry[:category],
+    amount:    entry[:amount],
+    issued_on: entry[:issued],
+    due_on:    entry[:due],
+    status:    "pending",
+    folder:    folder_2026,
+    remind_on: entry[:due] - 2
+  )
+end
+
+# ---- Factures en retard (status: overdue, due_date passée) ----
+overdue = [
+  { company: "Bell Canada",           category: "Télécommunications",  amount: 89.99,  issued: Date.new(2026, 2, 8),  due: Date.new(2026, 2, 22) },
+  { company: "Hydro-Québec",          category: "Hydro / Électricité", amount: 168.75, issued: Date.new(2026, 3, 5),  due: Date.new(2026, 3, 19) },
+  { company: "Canac",                 category: "Maison",              amount: 612.40, issued: Date.new(2026, 4, 11), due: Date.new(2026, 5, 1)  },
+  { company: "Vidéotron",             category: "Télécommunications",  amount: 64.95,  issued: Date.new(2026, 5, 12), due: Date.new(2026, 5, 26) },
+  { company: "Garage Lafleur",        category: "Transport / Auto",    amount: 845.20, issued: Date.new(2026, 5, 2),  due: Date.new(2026, 5, 30) },
+  { company: "Pharmacie Uniprix",     category: "Santé",               amount: 124.55, issued: Date.new(2026, 5, 20), due: Date.new(2026, 6, 5)  },
+  { company: "École Saint-Joseph",    category: "Enfants / Famille",   amount: 320.00, issued: Date.new(2026, 5, 25), due: Date.new(2026, 6, 10) }
+]
+
+overdue.each do |entry|
+  build.call(
+    company:   entry[:company],
+    category:  entry[:category],
+    amount:    entry[:amount],
+    issued_on: entry[:issued],
+    due_on:    entry[:due],
+    status:    "overdue",
+    folder:    folder_2026,
+    remind_on: entry[:due] + 3
+  )
+end
+
+invoices_count = user.invoices.count
+folders_count  = user.folders.count
+reminders_count = Reminder.joins(:invoice).where(invoices: { user_id: user.id }).count
+pending_count  = user.invoices.where(status: "pending").count
+overdue_count  = user.invoices.where(status: "overdue").count
+paid_count     = user.invoices.where(status: "paid").count
+
+puts "✓ #{invoices_count} factures (#{paid_count} payées, #{pending_count} à payer, #{overdue_count} en retard)"
+puts "✓ #{folders_count} classeurs (#{user.folders.pluck(:name).join(', ')})"
+puts "✓ #{reminders_count} rappels"
 puts "✓ Connexion : demo@invoicesnap.fr  /  password"
