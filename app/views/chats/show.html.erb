@@ -1,4 +1,4 @@
-<div class="container py-4">
+<div class="container pt-4 pb-0">
 
   <div class="card border-0 shadow-sm rounded-4 p-3 mb-2">
 
@@ -124,7 +124,7 @@
 
     </div>
 
-    <div class="chat-footer p-3">
+    <div class="chat-footer p-2">
 
       <div class="chat-suggestions mb-3">
 
@@ -165,7 +165,7 @@
       <%= simple_form_for [@chat, @message],
                           html: { id: "chat-form" } do |f| %>
 
-        <div class="d-flex align-items-end gap-2">
+        <div class="d-flex align-items-center gap-2">
 
           <div class="flex-grow-1">
 
@@ -183,7 +183,7 @@
 
             <%= f.button :submit,
                          "Envoyer",
-                         class: "btn btn-grad rounded-pill px-4 py-3 fw-semibold",
+                         class: "btn btn-grad rounded-pill px-4 py-2 fw-semibold",
                          id: "send-button" %>
 
           </div>

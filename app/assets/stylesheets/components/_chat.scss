@@ -1,5 +1,5 @@
 .chat-wrapper {
-  height: 70vh;
+  height: 75vh;
 
   display: flex;
   flex-direction: column;
@@ -24,7 +24,7 @@
 .chat-footer {
   position: sticky;
 
-  bottom: 70px;
+  bottom: Opx;
 
   z-index: 10;
 
@@ -136,7 +136,7 @@
 .chat-input {
   border: 1px solid #dcdcdc;
 
-  min-height: 60px;
+  min-height: 48px;
 
   font-size: 0.95rem;
 }
@@ -175,9 +175,9 @@
 
   border-radius: 999px;
 
-  padding: 8px 14px;
+  padding: 6px 12px;
 
-  font-size: 13px;
+  font-size: 12px;
 
   transition: all 0.2s ease;
 }
