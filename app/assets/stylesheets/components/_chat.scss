@@ -1,6 +1,5 @@
 .chat-wrapper {
-  height: calc(100dvh - 240px);
-  min-height: 70vh;
+  height: 75vh;
 
   display: flex;
   flex-direction: column;
@@ -23,6 +22,12 @@
 }
 
 .chat-footer {
+  position: sticky;
+
+  bottom: Opx;
+
+  z-index: 10;
+
   flex-shrink: 0;
 
   background: white;
@@ -131,7 +136,7 @@
 .chat-input {
   border: 1px solid #dcdcdc;
 
-  min-height: 60px;
+  min-height: 48px;
 
   font-size: 0.95rem;
 }
@@ -142,36 +147,37 @@
 }
 
 .chat-suggestions {
-  display: grid;
-
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
 
   gap: 8px;
+
+  flex-wrap: nowrap;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+
+  -ms-overflow-style: none;
 
   padding-bottom: 4px;
 }
 
-@media (min-width: 640px) {
-  .chat-suggestions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.chat-suggestions::-webkit-scrollbar {
+  display: none;
 }
 
 .suggestion-btn {
-  width: 100%;
+  flex-shrink: 0;
 
   border: 1px solid #e5e7eb;
 
   background: white;
 
-  border-radius: 14px;
+  border-radius: 999px;
 
-  padding: 10px 12px;
+  padding: 6px 12px;
 
-  font-size: 13px;
-  line-height: 1.25;
-  text-align: center;
-
-  white-space: normal;
-  word-break: break-word;
+  font-size: 12px;
 
   transition: all 0.2s ease;
 }
