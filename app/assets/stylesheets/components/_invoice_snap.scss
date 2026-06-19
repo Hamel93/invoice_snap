@@ -527,6 +527,14 @@ html, body { background: $is-surround; font-family: $body-font; color: $is-ink; 
 }
 .cal__cell.is-muted { color: $is-faint; }
 .cal__cell.is-today { background: $is-primary; color: $is-white; font-weight: 700; box-shadow: 0 4px 10px rgba(64,57,212,.3); }
+.cal__cell--btn {
+  border: 0; background: transparent; padding: 0; cursor: pointer;
+  font: inherit; color: inherit;
+  transition: background .15s ease, transform .15s ease;
+  &:hover { background: $is-lilac-bg; }
+  &:active { transform: scale(.96); }
+  &.is-today:hover { background: $is-primary; }
+}
 .cal__dot { width: 5px; height: 5px; border-radius: 50%; margin-top: 2px; }
 .cal__nav-btn {
   width: 32px; height: 32px; border-radius: 10px;

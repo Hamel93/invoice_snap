@@ -5,9 +5,9 @@
   offset   = (first.wday + 6) % 7
   days_in  = today.end_of_month.day
   rem      = @reminders.to_a
-  rdays    = rem.map(&:reminder_date).compact
-                .select { |d| d.month == today.month && d.year == today.year }.map(&:day)
-  upcoming = rem.select { |r| r.reminder_date && r.reminder_date >= today }.sort_by(&:reminder_date)
+  day_rems = rem.select { |r| r.reminder_date && r.reminder_date >= today && r.reminder_date.month == today.month && r.reminder_date.year == today.year && !r.sent }
+                .group_by { |r| r.reminder_date.day }
+  upcoming = rem.select { |r| r.reminder_date && r.reminder_date >= today && !r.sent }.sort_by(&:reminder_date)
   past_due = rem.select { |r| r.reminder_date && r.reminder_date < today && !r.sent }
 %>
 
@@ -51,12 +51,21 @@
       <% %w[Lun Mar Mer Jeu Ven Sam Dim].each do |d| %><div class="cal__dow"><%= d %></div><% end %>
       <% offset.times do %><div class="cal__cell is-muted"></div><% end %>
       <% (1..days_in).each do |day| %>
-        <div class="cal__cell <%= 'is-today' if day == today.day %>">
-          <span><%= day %></span>
-          <% if rdays.include?(day) %>
+        <% rems_for_day = day_rems[day] %>
+        <% if rems_for_day %>
+          <button type="button"
+                  class="cal__cell cal__cell--btn <%= 'is-today' if day == today.day %>"
+                  data-bs-toggle="modal"
+                  data-bs-target="#day-<%= day %>-modal"
+                  aria-label="Voir les <%= pluralize(rems_for_day.size, 'facture') %> du <%= day %>">
+            <span><%= day %></span>
             <span class="cal__dot" style="background:<%= day == today.day ? '#fff' : '#d97706' %>;"></span>
-          <% end %>
-        </div>
+          </button>
+        <% else %>
+          <div class="cal__cell <%= 'is-today' if day == today.day %>">
+            <span><%= day %></span>
+          </div>
+        <% end %>
       <% end %>
     </div>
   </div>
@@ -96,6 +105,47 @@
     </div>
   <% end %>
 </div>
+
+<%# Détail des factures à payer pour un jour donné %>
+<% day_rems.each do |day, rems| %>
+  <% date = Date.new(today.year, today.month, day) %>
+  <div class="modal fade" id="day-<%= day %>-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered px-3">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+              <div class="section-eyebrow mb-0"><%= fr_date(date) %></div>
+              <h2 class="section-title mt-1"><%= pluralize(rems.size, "facture") %> à payer</h2>
+            </div>
+            <button type="button" class="sheet__close" data-bs-dismiss="modal" aria-label="Fermer">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <% rems.each do |r| %>
+            <% inv = r.invoice %>
+            <%= link_to invoice_path(inv), class: "list-row" do %>
+              <% pill_class = r.reminder_date < Date.today + 3 ? "date-pill--warn" : "" %>
+              <div class="date-pill <%= pill_class %>">
+                <div class="date-pill__day"><%= r.reminder_date.day %></div>
+                <div class="date-pill__mo"><%= ApplicationHelper::FR_MONTHS_SHORT[r.reminder_date.month] %></div>
+              </div>
+              <div class="list-row__body">
+                <div class="list-row__title text-truncate"><%= inv.company_name.presence || "Facture" %></div>
+                <div class="list-row__sub">
+                  <%= inv.category.presence || "—" %>
+                  <% if inv.invoice_number.present? %> · <%= inv.invoice_number %><% end %>
+                </div>
+              </div>
+              <div class="list-row__amount"><%= eur(inv.amount) %></div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <%# Modale création de rappel %>
 <div class="modal fade" id="reminderModal" tabindex="-1" aria-hidden="true">

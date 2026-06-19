@@ -194,8 +194,62 @@ overdue.each do |entry|
     issued_on: entry[:issued],
     due_on:    entry[:due],
     status:    "overdue",
-    folder:    folder_2026,
-    remind_on: entry[:due] + 3
+    folder:    folder_2026
+  )
+end
+
+# ---- Uber Eats : la plus grosse dépense du compte ----
+# Commandes hebdomadaires sur 2024-2026 + une commande géante en décembre 2025.
+
+UBER_FOLDERS = { 2024 => year_folders[2024], 2025 => year_folders[2025], 2026 => folder_2026 }.freeze
+
+uber_orders_for_year = ->(year) do
+  last_day = (year == 2026 ? TODAY : Date.new(year, 12, 31))
+  orders = []
+  cursor = Date.new(year, 1, 3)
+  while cursor <= last_day
+    # 2 commandes par semaine, jeudi soir + dimanche midi.
+    [cursor + 3, cursor + 6].each do |order_date|
+      next if order_date > last_day
+      orders << { date: order_date, amount: [38.50, 42.90, 51.75, 47.20, 62.40, 56.80, 71.30, 49.95, 84.20, 59.40].sample }
+    end
+    cursor += 7
+  end
+  orders
+end
+
+[2024, 2025, 2026].each do |year|
+  uber_orders_for_year.call(year).each do |order|
+    build.call(
+      company:   "Uber Eats",
+      category:  "Restauration",
+      amount:    order[:amount],
+      issued_on: order[:date],
+      due_on:    order[:date],
+      status:    "paid",
+      folder:    UBER_FOLDERS[year]
+    )
+  end
+end
+
+# Une poignée de grosses commandes de groupe (équipe, anniversaires).
+[
+  { date: Date.new(2024,  6, 14), amount: 287.50 },
+  { date: Date.new(2024, 11,  8), amount: 312.80 },
+  { date: Date.new(2025,  3, 21), amount: 264.40 },
+  { date: Date.new(2025,  7, 18), amount: 398.60 },
+  { date: Date.new(2025, 12, 20), amount: 2845.90 }, # Réception Noël équipe — la plus grosse facture du compte
+  { date: Date.new(2026,  2, 13), amount: 412.30 },
+  { date: Date.new(2026,  5,  9), amount: 356.75 }
+].each do |order|
+  build.call(
+    company:   "Uber Eats",
+    category:  "Restauration",
+    amount:    order[:amount],
+    issued_on: order[:date],
+    due_on:    order[:date],
+    status:    "paid",
+    folder:    UBER_FOLDERS[order[:date].year]
   )
 end
 
